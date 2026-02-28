@@ -3,867 +3,262 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuizMind AI — Reference UI</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --card: #16161f;
-    --border: #ffffff0f;
-    --accent: #7c5cfc;
-    --accent2: #fc5c7d;
-    --accent3: #5cfcb8;
-    --text: #f0f0f5;
-    --muted: #7070a0;
-    --glow: #7c5cfc44;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* NAV */
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 2.5rem;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: #0a0a0f99;
-  }
-
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.3rem;
-    letter-spacing: -0.5px;
-  }
-
-  .logo span { color: var(--accent); }
-
-  .nav-pills {
-    display: flex;
-    gap: 0.3rem;
-    background: var(--surface);
-    padding: 0.3rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-  }
-
-  .nav-pill {
-    padding: 0.4rem 1rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    transition: all 0.2s;
-  }
-
-  .nav-pill.active {
-    background: var(--accent);
-    color: white;
-  }
-
-  /* PAGE SECTIONS */
-  .page {
-    display: none;
-    min-height: calc(100vh - 61px);
-    animation: fadeUp 0.4s ease;
-  }
-
-  .page.active { display: block; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── HOME PAGE ── */
-  .home {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 5rem 2rem 3rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .home::before {
-    content: '';
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, #7c5cfc22 0%, transparent 70%);
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-
-  .badge {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.4rem 1rem;
-    font-size: 0.75rem;
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 2rem;
-    letter-spacing: 0.5px;
-  }
-
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.8rem, 7vw, 5rem);
-    font-weight: 800;
-    text-align: center;
-    line-height: 1.05;
-    letter-spacing: -2px;
-    max-width: 700px;
-    margin-bottom: 1.5rem;
-  }
-
-  h1 .highlight {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .subtitle {
-    color: var(--muted);
-    text-align: center;
-    max-width: 480px;
-    line-height: 1.7;
-    margin-bottom: 3rem;
-    font-size: 1rem;
-  }
-
-  /* Topic input area */
-  .topic-box {
-    width: 100%;
-    max-width: 560px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-  }
-
-  .topic-label {
-    font-size: 0.75rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 0.8rem;
-    letter-spacing: 0.5px;
-  }
-
-  .topic-input-row {
-    display: flex;
-    gap: 0.8rem;
-  }
-
-  .topic-input {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 0.8rem 1.2rem;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .topic-input:focus { border-color: var(--accent); }
-  .topic-input::placeholder { color: var(--muted); }
-
-  .suggest-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 0.8rem 1rem;
-    color: var(--accent);
-    font-size: 0.8rem;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    white-space: nowrap;
-    transition: all 0.2s;
-  }
-
-  .suggest-btn:hover { background: var(--accent); color: white; }
-
-  /* AI suggestions chips */
-  .ai-suggestions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-
-  .chip {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.78rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--muted);
-  }
-
-  .chip:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* Config row */
-  .config-row {
-    width: 100%;
-    max-width: 560px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.8rem;
-    margin-bottom: 2rem;
-  }
-
-  .config-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1rem;
-  }
-
-  .config-card label {
-    font-size: 0.7rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    display: block;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.3px;
-  }
-
-  .config-card select {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .config-card select option { background: var(--surface); }
-
-  .start-btn {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none;
-    border-radius: 16px;
-    padding: 1rem 3rem;
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1.1rem;
-    cursor: pointer;
-    letter-spacing: -0.3px;
-    transition: all 0.3s;
-    box-shadow: 0 0 40px var(--glow);
-  }
-
-  .start-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 60px var(--glow);
-  }
-
-  /* ── QUIZ PAGE ── */
-  .quiz-page {
-    display: flex;
-    gap: 2rem;
-    padding: 2.5rem;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .quiz-sidebar {
-    width: 240px;
-    flex-shrink: 0;
-  }
-
-  .sidebar-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .sidebar-label {
-    font-size: 0.7rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
-  }
-
-  .sidebar-value {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 2rem;
-    letter-spacing: -1px;
-  }
-
-  .timer-value { color: var(--accent3); }
-  .score-value { color: var(--accent); }
-
-  .progress-dots {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-  }
-
-  .dot {
-    height: 8px;
-    border-radius: 999px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-  }
-
-  .dot.correct { background: var(--accent3); border-color: var(--accent3); }
-  .dot.wrong { background: var(--accent2); border-color: var(--accent2); }
-  .dot.current { background: var(--accent); border-color: var(--accent); }
-
-  .quiz-main { flex: 1; }
-
-  .question-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .q-counter {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-
-  .diff-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 999px;
-    border: 1px solid;
-  }
-
-  .diff-badge.medium { color: #ffd166; border-color: #ffd16644; background: #ffd16611; }
-
-  .question-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .question-text {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.35rem;
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: -0.3px;
-  }
-
-  .options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
-  }
-
-  .option {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 1rem 1.2rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-  }
-
-  .option:hover { border-color: var(--accent); background: #7c5cfc0a; }
-  .option.selected { border-color: var(--accent); background: #7c5cfc15; }
-  .option.correct-ans { border-color: var(--accent3); background: #5cfcb815; }
-  .option.wrong-ans { border-color: var(--accent2); background: #fc5c7d15; }
-
-  .opt-letter {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-    font-weight: 600;
-  }
-
-  .option.selected .opt-letter { background: var(--accent); color: white; }
-
-  .next-btn {
-    width: 100%;
-    background: var(--accent);
-    border: none;
-    border-radius: 16px;
-    padding: 1rem;
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: -0.2px;
-  }
-
-  .next-btn:hover { background: #9070ff; }
-
-  /* ── RESULTS PAGE ── */
-  .results-page {
-    padding: 3rem 2.5rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .results-hero {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-
-  .score-ring {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    background: conic-gradient(var(--accent) 0% 72%, var(--surface) 72% 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    position: relative;
-  }
-
-  .score-ring::before {
-    content: '';
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: var(--bg);
-    position: absolute;
-  }
-
-  .score-ring-val {
-    position: relative;
-    z-index: 1;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 2rem;
-    letter-spacing: -1px;
-  }
-
-  .results-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 0.5rem;
-  }
-
-  .results-sub { color: var(--muted); font-size: 0.9rem; }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.5rem;
-    text-align: center;
-  }
-
-  .stat-val {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 2rem;
-    letter-spacing: -1px;
-    margin-bottom: 0.3rem;
-  }
-
-  .stat-label { font-size: 0.78rem; color: var(--muted); }
-
-  /* Heatmap */
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    letter-spacing: -0.3px;
-  }
-
-  .heatmap {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .heatmap-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.8rem;
-  }
-
-  .heatmap-topic {
-    font-size: 0.85rem;
-    width: 120px;
-    flex-shrink: 0;
-  }
-
-  .heatmap-bar-bg {
-    flex: 1;
-    height: 8px;
-    background: var(--surface);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-
-  .heatmap-bar {
-    height: 100%;
-    border-radius: 999px;
-    transition: width 1s ease;
-  }
-
-  .heatmap-pct {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--muted);
-    width: 36px;
-    text-align: right;
-  }
-
-  .weak-tag {
-    background: #fc5c7d11;
-    border: 1px solid #fc5c7d44;
-    color: var(--accent2);
-    border-radius: 999px;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.65rem;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .action-btns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .btn-outline {
-    background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 1rem;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-  }
-
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none;
-    border-radius: 16px;
-    padding: 1rem;
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
-</style>
+<title>NEURAL QUIZ — HUD</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<nav>
-  <div class="logo">Quiz<span>Mind</span> AI</div>
-  <div class="nav-pills">
-    <button class="nav-pill active" onclick="showPage('home')">🏠 Home</button>
-    <button class="nav-pill" onclick="showPage('quiz')">⚡ Quiz</button>
-    <button class="nav-pill" onclick="showPage('results')">📊 Results</button>
+<!-- HUD BAR -->
+<div class="hud-bar">
+  <div class="hud-logo">NEURAL<span>QUIZ</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="go('home',0)">MISSION</button>
+    <button class="nav-tab"        onclick="go('quiz',1)">BATTLE</button>
+    <button class="nav-tab"        onclick="go('results',2)">DEBRIEF</button>
   </div>
-</nav>
-
-<!-- ══ HOME PAGE ══ -->
-<div class="page active" id="home">
-  <div class="home">
-    <div class="badge">✦ Powered by Claude AI</div>
-
-    <h1>Learn Smarter<br>with <span class="highlight">AI Quizzes</span></h1>
-
-    <p class="subtitle">
-      Enter any topic and our AI generates personalized quiz questions,
-      adapts to your skill level, and tracks your growth over time.
-    </p>
-
-    <div class="topic-box">
-      <div class="topic-label">// ENTER YOUR TOPIC</div>
-      <div class="topic-input-row">
-        <input class="topic-input" type="text" placeholder="e.g. JavaScript Promises, World War II..." />
-        <button class="suggest-btn" onclick="showSuggestions()">✦ AI Suggest</button>
-      </div>
-      <div class="ai-suggestions" id="suggestions" style="display:none">
-        <div class="chip" onclick="selectTopic(this)">React Hooks</div>
-        <div class="chip" onclick="selectTopic(this)">Data Structures</div>
-        <div class="chip" onclick="selectTopic(this)">Indian History</div>
-        <div class="chip" onclick="selectTopic(this)">Photosynthesis</div>
-        <div class="chip" onclick="selectTopic(this)">Python Basics</div>
-        <div class="chip" onclick="selectTopic(this)">Calculus</div>
-      </div>
-    </div>
-
-    <div class="config-row">
-      <div class="config-card">
-        <label>// QUESTIONS</label>
-        <select>
-          <option>10</option>
-          <option>15</option>
-          <option>20</option>
-        </select>
-      </div>
-      <div class="config-card">
-        <label>// DIFFICULTY</label>
-        <select>
-          <option>Auto</option>
-          <option>Easy</option>
-          <option>Medium</option>
-          <option>Hard</option>
-        </select>
-      </div>
-      <div class="config-card">
-        <label>// TIME / Q</label>
-        <select>
-          <option>30s</option>
-          <option>45s</option>
-          <option>60s</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="start-btn" onclick="showPage('quiz')">Generate Quiz →</button>
-  </div>
+  <div class="hud-time" id="clock">00:00:00</div>
 </div>
 
-<!-- ══ QUIZ PAGE ══ -->
-<div class="page" id="quiz">
-  <div class="quiz-page">
+<div class="pages">
 
-    <div class="quiz-sidebar">
-      <div class="sidebar-card">
-        <div class="sidebar-label">// TIME LEFT</div>
-        <div class="sidebar-value timer-value" id="timer">0:42</div>
+  <!-- ═══════ HOME / MISSION SELECT ═══════ -->
+  <div class="page active" id="home">
+
+    <div class="home-left">
+      <div class="mission-tag">MISSION SELECT</div>
+      <div class="home-title">
+        <div class="line1">TRAIN YOUR</div>
+        <div class="line2">NEURAL</div>
+        <div class="line3">NETWORK.</div>
       </div>
-      <div class="sidebar-card">
-        <div class="sidebar-label">// SCORE</div>
-        <div class="sidebar-value score-value">+320</div>
-      </div>
-      <div class="sidebar-card">
-        <div class="sidebar-label">// PROGRESS (7/10)</div>
-        <div class="progress-dots">
-          <div class="dot correct"></div>
-          <div class="dot correct"></div>
-          <div class="dot wrong"></div>
-          <div class="dot correct"></div>
-          <div class="dot correct"></div>
-          <div class="dot correct"></div>
-          <div class="dot current"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
+      <p class="home-desc">
+        AI generates adaptive quiz missions. Your performance data shapes the next challenge. Weakness detected — difficulty increases.
+      </p>
+      <div class="player-hud">
+        <div class="phud-box">
+          <div class="phud-label">LEVEL</div>
+          <div class="phud-val">07</div>
+        </div>
+        <div class="phud-box">
+          <div class="phud-label">TOTAL XP</div>
+          <div class="phud-val">2840</div>
+        </div>
+        <div class="phud-box">
+          <div class="phud-label">STREAK</div>
+          <div class="phud-val" style="color:var(--orange);text-shadow:0 0 12px var(--orange)">🔥 5</div>
         </div>
       </div>
-      <div class="sidebar-card">
-        <div class="sidebar-label">// ACCURACY</div>
-        <div class="sidebar-value" style="color:var(--accent3); font-size:1.6rem;">83%</div>
+    </div>
+
+    <div class="home-right">
+      <div class="section-tag">TARGET SUBJECT</div>
+
+      <div class="topic-field">
+        <div class="field-icon">&gt;_</div>
+        <input class="topic-input" id="topicInput" type="text" placeholder="ENTER SUBJECT — e.g. JavaScript, Photosynthesis…" />
+        <button class="ai-btn" onclick="toggleChips()">AI SCAN</button>
+      </div>
+
+      <div class="chips" id="chips" style="display:none">
+        <div class="chip" onclick="pick(this)">REACT HOOKS</div>
+        <div class="chip" onclick="pick(this)">DATA STRUCTURES</div>
+        <div class="chip" onclick="pick(this)">INDIAN HISTORY</div>
+        <div class="chip" onclick="pick(this)">PHOTOSYNTHESIS</div>
+        <div class="chip" onclick="pick(this)">PYTHON BASICS</div>
+        <div class="chip" onclick="pick(this)">CALCULUS</div>
+        <div class="chip" onclick="pick(this)">OS CONCEPTS</div>
+        <div class="chip" onclick="pick(this)">WORLD WAR II</div>
+      </div>
+
+      <div class="section-tag">MISSION PARAMETERS</div>
+
+      <div class="cfg-grid">
+        <div class="cfg-box">
+          <div class="cfg-label">ROUNDS</div>
+          <select>
+            <option>10</option>
+            <option>15</option>
+            <option>20</option>
+          </select>
+        </div>
+        <div class="cfg-box">
+          <div class="cfg-label">THREAT LEVEL</div>
+          <select>
+            <option>AUTO-ADAPT</option>
+            <option>EASY</option>
+            <option>MEDIUM</option>
+            <option>HARD</option>
+          </select>
+        </div>
+        <div class="cfg-box">
+          <div class="cfg-label">TIME / ROUND</div>
+          <select>
+            <option>30 SEC</option>
+            <option>45 SEC</option>
+            <option>60 SEC</option>
+            <option>UNLIMITED</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="launch-btn" onclick="go('quiz',1)">
+        ◈ &nbsp; LAUNCH MISSION &nbsp; ◈
+      </button>
+    </div>
+
+  </div><!-- /home -->
+
+  <!-- ═══════ QUIZ / BATTLE ═══════ -->
+  <div class="page" id="quiz" style="display:none">
+
+    <div class="quiz-sidebar">
+      <div class="sb-block" style="background:#00e5ff08;border-color:#00e5ff22">
+        <div class="sb-lbl">SUBJECT</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--cyan);letter-spacing:1px;line-height:1.4">JAVASCRIPT<br>BASICS</div>
+      </div>
+
+      <div class="sb-block">
+        <div class="sb-lbl">TIME REMAINING</div>
+        <div class="sb-num" style="color:var(--cyan);text-shadow:0 0 15px var(--cyan)" id="timer">0:42</div>
+        <div class="xp-bar-bg"><div class="xp-bar" style="background:linear-gradient(90deg,var(--cyan),var(--green));width:70%"></div></div>
+      </div>
+
+      <div class="sb-block">
+        <div class="sb-lbl">SCORE</div>
+        <div class="sb-num" style="color:var(--orange);text-shadow:0 0 15px var(--orange)">+320</div>
+      </div>
+
+      <div class="sb-block">
+        <div class="sb-lbl">ACCURACY</div>
+        <div class="sb-num" style="color:var(--yellow);text-shadow:0 0 10px var(--yellow);font-size:1.3rem">83%</div>
+        <div class="xp-bar-bg" style="margin-top:0.4rem">
+          <div class="xp-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange));width:83%"></div>
+        </div>
+      </div>
+
+      <div class="sb-block">
+        <div class="sb-lbl">PROGRESS · 7/10</div>
+        <div class="prog-grid">
+          <div class="psq ok"></div><div class="psq ok"></div><div class="psq bad"></div>
+          <div class="psq ok"></div><div class="psq ok"></div><div class="psq ok"></div>
+          <div class="psq now"></div><div class="psq"></div><div class="psq"></div><div class="psq"></div>
+        </div>
+      </div>
+
+      <div class="streak-badge">
+        <div class="streak-fire">🔥</div>
+        <div>
+          <div class="streak-txt">x4 COMBO</div>
+          <div class="streak-sub">KEEP GOING</div>
+        </div>
       </div>
     </div>
 
     <div class="quiz-main">
-      <div class="question-header">
-        <span class="q-counter">Question 07 of 10</span>
-        <span class="diff-badge medium">⚡ Medium</span>
+      <div class="q-topbar">
+        <span class="q-id">ROUND 07 / 10</span>
+        <span class="diff-hud med">◈ MEDIUM</span>
       </div>
 
-      <div class="question-card">
-        <p class="question-text">Which JavaScript method is used to convert a JSON string into a JavaScript object?</p>
+      <div class="timer-track">
+        <div class="timer-fill" id="timerBar"></div>
       </div>
 
-      <div class="options-grid">
-        <div class="option selected" onclick="selectOption(this)">
-          <div class="opt-letter">A</div>
-          JSON.parse()
-        </div>
-        <div class="option" onclick="selectOption(this)">
-          <div class="opt-letter">B</div>
-          JSON.stringify()
-        </div>
-        <div class="option" onclick="selectOption(this)">
-          <div class="opt-letter">C</div>
-          JSON.convert()
-        </div>
-        <div class="option" onclick="selectOption(this)">
-          <div class="opt-letter">D</div>
-          JSON.decode()
-        </div>
+      <div class="question-panel">
+        <div class="question-text">Which JavaScript method converts a JSON string into a JavaScript object?</div>
       </div>
 
-      <br>
-      <button class="next-btn" onclick="showPage('results')">Next Question →</button>
+      <div class="opts">
+        <div class="opt sel" onclick="selOpt(this)"><div class="opt-key">A</div>JSON.parse()</div>
+        <div class="opt"     onclick="selOpt(this)"><div class="opt-key">B</div>JSON.stringify()</div>
+        <div class="opt"     onclick="selOpt(this)"><div class="opt-key">C</div>JSON.convert()</div>
+        <div class="opt"     onclick="selOpt(this)"><div class="opt-key">D</div>JSON.decode()</div>
+      </div>
+
+      <div class="quiz-bottom">
+        <div class="combo-display">🔥 COMBO x4 · +80 BONUS XP</div>
+        <button class="next-btn" onclick="go('results',2)">NEXT ROUND ▶</button>
+      </div>
     </div>
 
-  </div>
+  </div><!-- /quiz -->
+
+  <!-- ═══════ RESULTS / DEBRIEF ═══════ -->
+  <div class="page" id="results">
+    <div class="debrief">
+
+      <div class="debrief-header">MISSION DEBRIEF</div>
+
+      <div class="score-hero">
+        <div class="score-dial"><div class="score-dial-val">72%</div></div>
+        <div class="hero-info">
+          <div class="hero-grade">MISSION COMPLETE</div>
+          <div class="hero-sub">JavaScript Basics · 8/10 correct · +12% vs last run<br>2 threats neutralized. 2 weaknesses flagged for recon.</div>
+        </div>
+        <div class="xp-gained">
+          <div class="xp-big">+640</div>
+          <div class="xp-lbl">XP EARNED</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--green);text-shadow:0 0 12px var(--green)">8</div>
+          <div class="stat-lbl">NEUTRALIZED</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--red);text-shadow:0 0 12px var(--red)">2</div>
+          <div class="stat-lbl">FAILED</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--cyan);text-shadow:0 0 12px var(--cyan)">34s</div>
+          <div class="stat-lbl">AVG RESPONSE</div>
+        </div>
+      </div>
+
+      <div class="section-tag" style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:0.6rem">
+        INTEL REPORT — TOPIC PERFORMANCE
+        <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);display:block"></span>
+      </div>
+
+      <div class="hm-panel">
+        <div class="hm-row">
+          <div class="hm-topic">ARRAYS</div>
+          <div class="hm-track"><div class="hm-fill" style="width:90%;background:linear-gradient(90deg,var(--green),#00cc66);box-shadow:0 0 8px var(--green)"></div></div>
+          <div class="hm-right"><div class="hm-pct">90%</div></div>
+        </div>
+        <div class="hm-row">
+          <div class="hm-topic">FUNCTIONS</div>
+          <div class="hm-track"><div class="hm-fill" style="width:80%;background:linear-gradient(90deg,var(--cyan),#0099cc);box-shadow:0 0 8px var(--cyan)"></div></div>
+          <div class="hm-right"><div class="hm-pct">80%</div></div>
+        </div>
+        <div class="hm-row">
+          <div class="hm-topic">CLOSURES</div>
+          <div class="hm-track"><div class="hm-fill" style="width:55%;background:linear-gradient(90deg,var(--yellow),#cc9900);box-shadow:0 0 6px var(--yellow)"></div></div>
+          <div class="hm-right"><div class="hm-pct">55%</div></div>
+        </div>
+        <div class="hm-row">
+          <div class="hm-topic">PROMISES</div>
+          <div class="hm-track"><div class="hm-fill" style="width:40%;background:linear-gradient(90deg,var(--red),#cc0033);box-shadow:0 0 6px var(--red)"></div></div>
+          <div class="hm-right"><div class="hm-pct">40%</div><div class="weak-tag">WEAK</div></div>
+        </div>
+        <div class="hm-row">
+          <div class="hm-topic">DOM API</div>
+          <div class="hm-track"><div class="hm-fill" style="width:30%;background:linear-gradient(90deg,var(--red),#cc0033);box-shadow:0 0 6px var(--red)"></div></div>
+          <div class="hm-right"><div class="hm-pct">30%</div><div class="weak-tag">WEAK</div></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="act-ghost" onclick="go('home',0)">◄ NEW MISSION</button>
+        <button class="act-primary" onclick="go('quiz',1)">RECON WEAK ZONES ►</button>
+      </div>
+
+    </div>
+  </div><!-- /results -->
+
 </div>
-
-<!-- ══ RESULTS PAGE ══ -->
-<div class="page" id="results">
-  <div class="results-page">
-
-    <div class="results-hero">
-      <div class="score-ring">
-        <div class="score-ring-val">72%</div>
-      </div>
-      <div class="results-title">Pretty Good! 🎯</div>
-      <div class="results-sub">You scored 72% on JavaScript Basics — better than yesterday's 64%</div>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--accent3)">8</div>
-        <div class="stat-label">Correct</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--accent2)">2</div>
-        <div class="stat-label">Wrong</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--accent)">34s</div>
-        <div class="stat-label">Avg. Time</div>
-      </div>
-    </div>
-
-    <div class="section-title">Performance Heatmap</div>
-    <div class="heatmap">
-      <div class="heatmap-row">
-        <div class="heatmap-topic">Arrays</div>
-        <div class="heatmap-bar-bg"><div class="heatmap-bar" style="width:90%;background:var(--accent3)"></div></div>
-        <div class="heatmap-pct">90%</div>
-      </div>
-      <div class="heatmap-row">
-        <div class="heatmap-topic">Functions</div>
-        <div class="heatmap-bar-bg"><div class="heatmap-bar" style="width:80%;background:var(--accent)"></div></div>
-        <div class="heatmap-pct">80%</div>
-      </div>
-      <div class="heatmap-row">
-        <div class="heatmap-topic">Promises</div>
-        <div class="heatmap-bar-bg"><div class="heatmap-bar" style="width:40%;background:var(--accent2)"></div></div>
-        <div class="heatmap-pct">40% <span class="weak-tag">weak</span></div>
-      </div>
-      <div class="heatmap-row">
-        <div class="heatmap-topic">Closures</div>
-        <div class="heatmap-bar-bg"><div class="heatmap-bar" style="width:55%;background:#ffd166"></div></div>
-        <div class="heatmap-pct">55%</div>
-      </div>
-      <div class="heatmap-row">
-        <div class="heatmap-topic">DOM API</div>
-        <div class="heatmap-bar-bg"><div class="heatmap-bar" style="width:30%;background:var(--accent2)"></div></div>
-        <div class="heatmap-pct">30% <span class="weak-tag">weak</span></div>
-      </div>
-    </div>
-
-    <div class="action-btns">
-      <button class="btn-outline" onclick="showPage('home')">← New Quiz</button>
-      <button class="btn-primary" onclick="showPage('quiz')">Retry Weak Topics ↗</button>
-    </div>
-
-  </div>
-</div>
-
-<script>
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    const idx = ['home','quiz','results'].indexOf(id);
-    document.querySelectorAll('.nav-pill')[idx].classList.add('active');
-  }
-
-  function showSuggestions() {
-    const s = document.getElementById('suggestions');
-    s.style.display = s.style.display === 'none' ? 'flex' : 'none';
-  }
-
-  function selectTopic(el) {
-    document.querySelector('.topic-input').value = el.textContent;
-  }
-
-  function selectOption(el) {
-    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    el.querySelector('.opt-letter').style.background = 'var(--accent)';
-    el.querySelector('.opt-letter').style.color = 'white';
-  }
-
-  // Timer countdown
-  let t = 42;
-  setInterval(() => {
-    if (t > 0) t--;
-    const m = Math.floor(t/60), s = t%60;
-    const el = document.getElementById('timer');
-    if (el) el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
-  }, 1000);
-</script>
+<script src="script.js"></script>
 </body>
 </html>
