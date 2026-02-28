@@ -39,14 +39,6 @@ function pick(el) {
   document.getElementById('chips').style.display = 'none';
 }
 
-
-// highlights the selected answer option, removes highlight from the rest
-function selOpt(el) {
-  document.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-
 // live clock — updates the HUD clock every second
 setInterval(() => {
   const now = new Date();
@@ -61,4 +53,3 @@ setInterval(() => {
 window.go = go;
 window.toggleChips = toggleChips;
 window.pick = pick;
-window.selOpt = selOpt;
