@@ -1,13 +1,13 @@
 // quiz countdown — ticks down every second and shrinks the timer bar
-let t=5; // time for each question
+const timePerQue = 5; //default for fast coding
+let t=timePerQue; // time for each question
 const bar = document.getElementById('timerBar');
 export let intervalId;
 export function startTimer(onTimeUP) {
     //stop interval after timer is over\
-    t = 5; // reset time for each question
+    t = timePerQue; // reset time for each question
     bar.style.width = '100% ';
     bar.style.background = 'linear-gradient(90deg, var(--cyan), var(--green))';
-    clearInterval(intervalId);
 
     intervalId = setInterval(() => {
         console.log(t);
@@ -22,7 +22,7 @@ export function startTimer(onTimeUP) {
 
         // if bar exists (null check), update its width and turn red when under 10s
         if (bar) {
-            let pct = (t / 5) * 100;          // 30s = 100% full bar
+            let pct = (t / timePerQue) * 100;          // 30s = 100% full bar
             pct = Math.max(0, Math.min(100, pct)); //pct can be only between 0 and 100
             bar.style.width = pct + '%';
             if (t < 10) bar.style.background = 'linear-gradient(90deg,var(--red),var(--orange))';
@@ -30,3 +30,14 @@ export function startTimer(onTimeUP) {
     }, 1000);
 }
 
+export let totalTimeTaken =0; //varible to calculate average time taken for each question inside quiz.js
+export function stopTimer() {
+    clearInterval(intervalId);
+    totalTimeTaken+=timePerQue-t; // totaltime-timeleft = time taken
+}
+
+export let timeleft=0; //variable to store time left for XP calculation (only for correct answers)
+export function addTimeleft(){
+    timeleft+=t;
+    console.log(timeleft);
+}

@@ -1,4 +1,4 @@
-import { startTimer, intervalId } from './utils/timer.js';
+import { startTimer, stopTimer, addTimeleft,totalTimeTaken} from './utils/timer.js';
 import { questions } from './data/questions.js';
 import { saveToStorage } from './results.js';
 
@@ -44,6 +44,7 @@ export function nextQuestion() {
         // all questions done → go to results
         console.log('quiz over');
         scoreData['accuracy'] = Math.round((scoreData.correct / questions.length) * 100); // calculate accuracy percentage
+        scoreData['averageTime'] = Math.round(totalTimeTaken / questions.length) ; // calculate average time per question
         console.log(scoreData);
         saveToStorage(scoreData);
         go('results', 2);
@@ -57,7 +58,7 @@ export function showCorrectOpt() {
 }
 function selOpt(el, selected) {
     // prevent double clicking
-    clearInterval(intervalId);//stop the time when the user selects an option
+    stopTimer();//stop the time when the user selects an option
     scoreData.totalAnswered++; //user attempted the question by selecting an option
     document.querySelectorAll('.opt').forEach(o => o.onclick = null);
 
@@ -66,6 +67,7 @@ function selOpt(el, selected) {
     if (selected === correctAnswer) {
         el.classList.add('correct');
         scoreData.correct++;
+        addTimeleft(); // add remaining time to timeleft array for XP calculation(XP only for correct Answers)
     } else {
         scoreData.wrong++;
         el.classList.add('wrong'); // added class to highlight it after getting clicked , if wrong selected

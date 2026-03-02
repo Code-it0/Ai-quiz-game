@@ -1,9 +1,10 @@
 import { calculateXP } from "./utils/XP.js";
 import { quizTopic } from './home.js';
 export function generateResults(scoreData) {
-    const { correct, wrong, totalAnswered, totalQuestions, accuracy } = scoreData;
+    const { correct, wrong, totalAnswered, totalQuestions, accuracy ,averageTime} = scoreData;
     (document.querySelector('.js-correct-num')).textContent = correct; //changing score on page
     (document.querySelector('.js-wrong-num')).textContent = wrong; // changing wrong score on page
+    (document.querySelector('.js-avg-time')).textContent = averageTime+" SEC"; // changing average time on page
 
     //finding previous accuracy from local storage
     const prevData = loadFromStorage(1); // get previous score data (index 1 since current score is at index 0)
