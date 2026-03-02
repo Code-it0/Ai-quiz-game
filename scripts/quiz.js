@@ -43,6 +43,7 @@ export function nextQuestion() {
     } else {
         // all questions done → go to results
         console.log('quiz over');
+        scoreData['accuracy'] = Math.round((scoreData.correct / questions.length) * 100); // calculate accuracy percentage
         console.log(scoreData);
         saveToStorage(scoreData);
         go('results', 2);

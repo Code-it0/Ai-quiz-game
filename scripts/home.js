@@ -1,0 +1,1 @@
+export const quizTopic = 'JavaScript Basics';
