@@ -1,17 +1,17 @@
-import { startTimer,intervalId } from './utils/timer.js';
+import { startTimer, intervalId } from './utils/timer.js';
 import { questions } from './data/questions.js';
-import {saveToStorage} from './results.js';
+import { saveToStorage } from './results.js';
 
 let currentIndex = 0; // tracks which question we're on
 
 //socoring variables 
 
 const scoreData = {
-        correct:0, //correct answers
-        wrong :0, // worng answers
-        totalAnswered :0, //total questions answeres (including wrong)
-        totalQuestions :questions.length //total questions
-    };
+    correct: 0, //correct answers
+    wrong: 0, // worng answers
+    totalAnswered: 0, //total questions answeres (including wrong)
+    totalQuestions: questions.length //total questions
+};
 console.log(scoreData.totalQuestions);
 
 function generateQuestion(question) {
@@ -27,12 +27,12 @@ function generateQuestion(question) {
         ${opt}
         </div>`;
     });
-    
-    startTimer(()=>{
+
+    startTimer(() => {
         showCorrectOpt();
-            setTimeout(() => {
-                nextQuestion();
-            }, 1500);
+        setTimeout(() => {
+            nextQuestion();
+        }, 1500);
     });
 }
 
@@ -61,25 +61,27 @@ function selOpt(el, selected) {
     scoreData.totalAnswered++; //user attempted the question by selecting an option
     document.querySelectorAll('.opt').forEach(o => o.onclick = null);
 
-            const correctAnswer = questions[currentIndex].correct_answer;
+    const correctAnswer = questions[currentIndex].correct_answer;
 
-            if (selected === correctAnswer) {
-                el.classList.add('correct');
-                scoreData.correct++;
-            } else {
-                scoreData.wrong++;
-                el.classList.add('wrong'); // added class to highlight it after getting clicked , if wrong selected
-                // also highlight the correct one
-                showCorrectOpt();
+    if (selected === correctAnswer) {
+        el.classList.add('correct');
+        scoreData.correct++;
+    } else {
+        scoreData.wrong++;
+        el.classList.add('wrong'); // added class to highlight it after getting clicked , if wrong selected
+        // also highlight the correct one
+        showCorrectOpt();
+    }
+
+    setTimeout(() => {
+        nextQuestion();
+    }, 1500);
 }
 
-setTimeout(() => {
-    nextQuestion();
-}, 1500);
-}
-
-// start with first question
-generateQuestion(questions[currentIndex]);
+document.querySelector('.js-launch-btn').addEventListener('click', () => {
+    // start with first question
+    generateQuestion(questions[currentIndex]);
+});
 
 window.selOpt = selOpt;
 /*```
