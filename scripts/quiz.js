@@ -1,14 +1,18 @@
 import { startTimer,intervalId } from './utils/timer.js';
 import { questions } from './data/questions.js';
+import {saveToStorage} from './results.js';
 
 let currentIndex = 0; // tracks which question we're on
 
 //socoring variables 
-let correct = 0;        // correct answers
-let wrong = 0;
-let totalAnswered = 0; // total questions answered (including wrong)
-let totalQuestions = questions.length; // total questions
-console.log(totalQuestions);
+
+const scoreData = {
+        correct:0, //correct answers
+        wrong :0, // worng answers
+        totalAnswered :0, //total questions answeres (including wrong)
+        totalQuestions :questions.length //total questions
+    };
+console.log(scoreData.totalQuestions);
 
 function generateQuestion(question) {
     document.querySelector('.js-question-text').textContent = question.question;
@@ -39,7 +43,8 @@ export function nextQuestion() {
     } else {
         // all questions done → go to results
         console.log('quiz over');
-        console.log(correct,wrong,totalAnswered,totalQuestions);
+        console.log(scoreData);
+        saveToStorage(scoreData);
         go('results', 2);
     }
 }
@@ -52,16 +57,16 @@ export function showCorrectOpt() {
 function selOpt(el, selected) {
     // prevent double clicking
     clearInterval(intervalId);//stop the time when the user selects an option
-    totalAnswered++; //user attempted the question by selecting an option
+    scoreData.totalAnswered++; //user attempted the question by selecting an option
     document.querySelectorAll('.opt').forEach(o => o.onclick = null);
 
             const correctAnswer = questions[currentIndex].correct_answer;
 
             if (selected === correctAnswer) {
                 el.classList.add('correct');
-                correct++;
+                scoreData.correct++;
             } else {
-                wrong++;
+                scoreData.wrong++;
                 el.classList.add('wrong'); // added class to highlight it after getting clicked , if wrong selected
                 // also highlight the correct one
                 showCorrectOpt();

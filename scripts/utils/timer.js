@@ -8,8 +8,7 @@ export function startTimer(onTimeUP) {
     bar.style.width = '100% ';
     bar.style.background = 'linear-gradient(90deg, var(--cyan), var(--green))';
     clearInterval(intervalId);
-    
-    console.log(typeof nextQuestion, typeof showCorrectOpt);
+
     intervalId = setInterval(() => {
         console.log(t);
         if (t > 0) t--;
