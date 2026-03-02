@@ -3,6 +3,13 @@ import { questions } from './data/questions.js';
 
 let currentIndex = 0; // tracks which question we're on
 
+//socoring variables 
+let correct = 0;        // correct answers
+let wrong = 0;
+let totalAnswered = 0; // total questions answered (including wrong)
+let totalQuestions = questions.length; // total questions
+console.log(totalQuestions);
+
 function generateQuestion(question) {
     document.querySelector('.js-question-text').textContent = question.question;
 
@@ -11,11 +18,12 @@ function generateQuestion(question) {
 
     question.options.forEach((opt, i) => {
         optsContainer.innerHTML += `
-      <div class="opt" onclick="selOpt(this, '${opt}')">
+        <div class="opt" onclick="selOpt(this, '${opt}')">
         <div class="opt-key">${String.fromCharCode(65 + i)}</div>
         ${opt}
         </div>`;
     });
+    
     startTimer(()=>{
         showCorrectOpt();
             setTimeout(() => {
@@ -31,6 +39,7 @@ export function nextQuestion() {
     } else {
         // all questions done → go to results
         console.log('quiz over');
+        console.log(correct,wrong,totalAnswered,totalQuestions);
         go('results', 2);
     }
 }
@@ -41,15 +50,18 @@ export function showCorrectOpt() {
     });
 }
 function selOpt(el, selected) {
-            // prevent double clicking
-            clearInterval(intervalId);//stop the time when the user selects an option
-            document.querySelectorAll('.opt').forEach(o => o.onclick = null);
+    // prevent double clicking
+    clearInterval(intervalId);//stop the time when the user selects an option
+    totalAnswered++; //user attempted the question by selecting an option
+    document.querySelectorAll('.opt').forEach(o => o.onclick = null);
 
-            const correct = questions[currentIndex].correct_answer;
+            const correctAnswer = questions[currentIndex].correct_answer;
 
-            if (selected === correct) {
+            if (selected === correctAnswer) {
                 el.classList.add('correct');
+                correct++;
             } else {
+                wrong++;
                 el.classList.add('wrong'); // added class to highlight it after getting clicked , if wrong selected
                 // also highlight the correct one
                 showCorrectOpt();
