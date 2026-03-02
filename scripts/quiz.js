@@ -1,6 +1,7 @@
-import { startTimer, stopTimer, addTimeleft,totalTimeTaken} from './utils/timer.js';
+import { startTimer, stopTimer, addTimeleft, totalTimeTaken } from './utils/timer.js';
 import { questions } from './data/questions.js';
 import { saveToStorage } from './results.js';
+import { calculateXP } from './utils/XP.js';
 
 let currentIndex = 0; // tracks which question we're on
 
@@ -10,9 +11,12 @@ const scoreData = {
     correct: 0, //correct answers
     wrong: 0, // worng answers
     totalAnswered: 0, //total questions answeres (including wrong)
-    totalQuestions: questions.length //total questions
+    totalQuestions: questions.length, //total questions
+    accuracy: 0 //accuracy percentage
 };
 console.log(scoreData.totalQuestions);
+
+let xp = 0, accuracy = 0;
 
 function generateQuestion(question) {
     document.querySelector('.js-question-text').textContent = question.question;
@@ -26,6 +30,8 @@ function generateQuestion(question) {
         <div class="opt-key">${String.fromCharCode(65 + i)}</div>
         ${opt}
         </div>`;
+        document.querySelector('.js-left-score').textContent = xp; // update XP in left panel
+        document.querySelector('.js-left-accuracy').textContent = `${accuracy}%`; // update accuracy in left panel
     });
 
     startTimer(() => {
@@ -43,8 +49,8 @@ export function nextQuestion() {
     } else {
         // all questions done → go to results
         console.log('quiz over');
-        scoreData['accuracy'] = Math.round((scoreData.correct / questions.length) * 100); // calculate accuracy percentage
-        scoreData['averageTime'] = Math.round(totalTimeTaken / questions.length) ; // calculate average time per question
+        scoreData.accuracy = accuracy; // put global accracy value inside the object accuracy
+        scoreData['averageTime'] = Math.round(totalTimeTaken / questions.length); // calculate average time per question
         console.log(scoreData);
         saveToStorage(scoreData);
         go('results', 2);
@@ -62,6 +68,7 @@ function selOpt(el, selected) {
     scoreData.totalAnswered++; //user attempted the question by selecting an option
     document.querySelectorAll('.opt').forEach(o => o.onclick = null);
 
+    
     const correctAnswer = questions[currentIndex].correct_answer;
 
     if (selected === correctAnswer) {
@@ -74,7 +81,8 @@ function selOpt(el, selected) {
         // also highlight the correct one
         showCorrectOpt();
     }
-
+    
+    updateLeftPanel(); //update left panel when user clicks on the option and scores are updated
     setTimeout(() => {
         nextQuestion();
     }, 1500);
@@ -85,7 +93,24 @@ document.querySelector('.js-launch-btn').addEventListener('click', () => {
     generateQuestion(questions[currentIndex]);
 });
 
+
+function updateLeftPanel() {
+    xp = calculateXP(scoreData);
+    accuracy = Math.round((scoreData.correct / (currentIndex+ 1)) * 100); //updating accuracy as questions pass
+    let xpPanel = document.querySelector('.js-left-score');
+    xpPanel.textContent = xp;
+    let accuracyPanel = document.querySelector('.js-left-accuracy');
+    accuracyPanel.textContent = `${accuracy}%`;
+
+    console.log(xp,accuracy);
+}
+
+
 window.selOpt = selOpt;
+
+
+
+
 /*```
 
 **Two things I fixed from your code:**
