@@ -1,7 +1,7 @@
-import { calculateXP } from "./utils/XP.js";
-import { quizTopic } from './home.js';
+import { quizTopic, } from './home.js';
+import { questions } from "./data/questions.js";
 export function generateResults(scoreData) {
-    const { correct, wrong, totalAnswered, totalQuestions, accuracy ,averageTime} = scoreData;
+    const { correct, wrong, totalAnswered, totalQuestions, accuracy ,averageTime,xp} = scoreData;
     (document.querySelector('.js-correct-num')).textContent = correct; //changing score on page
     (document.querySelector('.js-wrong-num')).textContent = wrong; // changing wrong score on page
     (document.querySelector('.js-avg-time')).textContent = averageTime+" SEC"; // changing average time on page
@@ -11,9 +11,7 @@ export function generateResults(scoreData) {
     const prevAccuracy = prevData ? prevData.accuracy : 'last run';
     (document.querySelector('.hero-info')).innerHTML += `<div class="hero-sub">${quizTopic} · ${correct}/${totalQuestions} correct · +${accuracy}% vs ${prevAccuracy}% <br>${correct} threats neutralized. ${wrong} weaknesses flagged for recon.</div>`;
 
-
-    const xp = calculateXP(scoreData);
-    (document.querySelector('.js-xp')).textContent = `+${xp}`; // display calculated XP on page
+    (document.querySelector('.js-xp')).textContent = `+${xp}`; // display  XP on page
 
 
     // for the conic-gradient dial

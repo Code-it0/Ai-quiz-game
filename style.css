@@ -560,13 +560,13 @@ body::after {
     transition: all 0.2s;
 }
 
-.psq.ok {
+.psq.correct {
     background: var(--green);
     border-color: var(--green);
     box-shadow: 0 0 6px var(--green);
 }
 
-.psq.bad {
+.psq.wrong {
     background: var(--red);
     border-color: var(--red);
     box-shadow: 0 0 6px var(--red);
@@ -642,20 +642,51 @@ body::after {
     letter-spacing: 2px;
 }
 
+/* --- BASE HUD STYLE --- */
 .diff-hud {
     font-family: 'Orbitron', monospace;
     font-size: 0.6rem;
     letter-spacing: 2px;
     padding: 0.25rem 0.8rem;
     border: 1px solid;
+    /* The clipped corner effect */
     clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    
+    /* Smooth transition for color changes */
+    transition: all 0.3s ease;
 }
 
+/* --- EASY (Green / Cyber-Green) --- */
+.diff-hud.easy {
+    color: var(--green, #00ff41);   /* Fallback: Neon Green */
+    border-color: #00ff4144;        /* Green @ ~25% opacity */
+    background: #00ff4110;          /* Green @ ~6% opacity */
+    text-shadow: 0 0 8px var(--green, #00ff41);
+}
+
+/* --- MEDIUM (Yellow / Gold) --- */
 .diff-hud.med {
-    color: var(--yellow);
+    color: var(--yellow, #ffd600);
     border-color: #ffd60044;
     background: #ffd60010;
-    text-shadow: 0 0 8px var(--yellow);
+    text-shadow: 0 0 8px var(--yellow, #ffd600);
+}
+
+/* --- HARD (Red / Crimson) --- */
+.diff-hud.hard {
+    color: var(--red, #ff003c);     /* Fallback: Cyber Red */
+    border-color: #ff003c44;        /* Red @ ~25% opacity */
+    background: #ff003c10;          /* Red @ ~6% opacity */
+    text-shadow: 0 0 8px var(--red, #ff003c);
+}
+
+/* --- GOD MODE (Purple / Ultra) --- */
+.diff-hud.god {
+    color: var(--purple, #bc13fe);  /* Fallback: Neon Purple */
+    border-color: #bc13fe44;
+    background: #bc13fe10;
+    text-shadow: 0 0 10px var(--purple, #bc13fe);
+    box-shadow: 0 0 15px #bc13fe20; /* Extra glow for God mode */
 }
 
 /* timer bar */

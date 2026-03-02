@@ -115,7 +115,7 @@
     <div class="quiz-sidebar">
       <div class="sb-block" style="background:#00e5ff08;border-color:#00e5ff22">
         <div class="sb-lbl">SUBJECT</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--cyan);letter-spacing:1px;line-height:1.4">JAVASCRIPT<br>BASICS</div>
+        <div class="js-quiz-topic" style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--cyan);letter-spacing:1px;line-height:1.4">JAVASCRIPT<br>BASICS</div>
       </div>
 
       <div class="sb-block">
@@ -126,39 +126,45 @@
 
       <div class="sb-block">
         <div class="sb-lbl">SCORE</div>
-        <div class="sb-num js-left-score" style="color:var(--orange);text-shadow:0 0 15px var(--orange)">+320</div>
+        <div class="sb-num js-left-score" style="color:var(--orange);text-shadow:0 0 15px var(--orange)">+0</div>
       </div>
 
       <div class="sb-block">
         <div class="sb-lbl">ACCURACY</div>
-        <div class="sb-num js-left-accuracy" style="color:var(--yellow);text-shadow:0 0 10px var(--yellow);font-size:1.3rem">83%</div>
+        <div class="sb-num js-left-accuracy" style="color:var(--yellow);text-shadow:0 0 10px var(--yellow);font-size:1.3rem">0%</div>
         <div class="xp-bar-bg" style="margin-top:0.4rem">
-          <div class="xp-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange));width:83%"></div>
+          <div class="xp-bar js-accuracy-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange));width:1%"></div>
         </div>
       </div>
 
       <div class="sb-block">
-        <div class="sb-lbl">PROGRESS · 7/10</div>
-        <div class="prog-grid">
-          <div class="psq ok"></div><div class="psq ok"></div><div class="psq bad"></div>
-          <div class="psq ok"></div><div class="psq ok"></div><div class="psq ok"></div>
-          <div class="psq now"></div><div class="psq"></div><div class="psq"></div><div class="psq"></div>
+        <div class="sb-lbl js-prog-lbl">PROGRESS · 1/10</div>
+        <div class="prog-grid js-prog-grid " data-generated="0">
+          <!-- <div class="prog-cell now" id="psq-1"></div>
+          <div class="prog-cell" id="psq-2"></div>
+          <div class="prog-cell" id="psq-3"></div>
+          <div class="prog-cell" id="psq-4"></div>
+          <div class="prog-cell" id="psq-5"></div>
+          <div class="prog-cell" id="psq-6"></div>
+          <div class="prog-cell" id="psq-7"></div>
+          <div class="prog-cell" id="psq-8"></div>
+          <div class="prog-cell" id="psq-9"></div> -->
         </div>
       </div>
 
-      <div class="streak-badge">
+      <div class="streak-badge" style="display:none;">
         <div class="streak-fire">🔥</div>
         <div>
-          <div class="streak-txt">x4 COMBO</div>
-          <div class="streak-sub">KEEP GOING</div>
+          <div class="streak-txt js-streak-txt">x0 COMBO</div>
+          <div class="streak-sub js-streak-msg">KEEP GOING</div>
         </div>
       </div>
     </div>
 
     <div class="quiz-main">
       <div class="q-topbar">
-        <span class="q-id">ROUND 07 / 10</span>
-        <span class="diff-hud med">◈ MEDIUM</span>
+        <span class="q-id js-round-lbl">ROUND 07 / 10</span>
+        <span class="diff-hud js-diff-lbl">◈ MEDIUM</span>
       </div>
 
       <div class="timer-track">
@@ -177,7 +183,7 @@
       </div>
 
       <div class="quiz-bottom">
-        <div class="combo-display">🔥 COMBO x4 · +80 BONUS XP</div>
+        <div class="combo-display js-combo-display" style="display: none;">🔥 COMBO x0 · +0 BONUS XP</div>
         <button class="next-btn" onclick="go('results',2)">NEXT ROUND ▶</button>
       </div>
     </div>

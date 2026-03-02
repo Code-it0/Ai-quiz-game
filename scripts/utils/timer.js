@@ -41,3 +41,22 @@ export function addTimeleft(){
     timeleft+=t;
     console.log(timeleft);
 }
+/*
+function totalTimerBar(){
+    const totalBar = document.querySelector('.js-xp-bar');
+    const t = (timeleft / (timePerQue * questions.length)) * 100;
+    totalBar.style.width = t + '%';
+
+    intervalId = setInterval(() => {
+        if (t > 0) t--;
+        else {
+            clearInterval(intervalId);
+        }
+        // if bar exists (null check), update its width and turn red when under 10s
+        if (bar) {
+            let pct = (t / timePerQue) * 100;          // 30s = 100% full bar
+            pct = Math.max(0, Math.min(100, pct)); //pct can be only between 0 and 100
+            bar.style.width = pct + '%';
+        }
+    }, 1000);
+}*/
