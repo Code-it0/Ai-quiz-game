@@ -1,4 +1,4 @@
-import { startTimer } from './utils/timer.js';
+import { startTimer,intervalId } from './utils/timer.js';
 import { questions } from './data/questions.js';
 
 let currentIndex = 0; // tracks which question we're on
@@ -14,11 +14,17 @@ function generateQuestion(question) {
       <div class="opt" onclick="selOpt(this, '${opt}')">
         <div class="opt-key">${String.fromCharCode(65 + i)}</div>
         ${opt}
-      </div>`;
+        </div>`;
+    });
+    startTimer(()=>{
+        showCorrectOpt();
+            setTimeout(() => {
+                nextQuestion();
+            }, 1500);
     });
 }
 
-function nextQuestion() {
+export function nextQuestion() {
     currentIndex++;
     if (currentIndex < questions.length) {
         generateQuestion(questions[currentIndex]);
@@ -28,31 +34,34 @@ function nextQuestion() {
         go('results', 2);
     }
 }
-
-function selOpt(el, selected) {
-    // prevent double clicking
-    document.querySelectorAll('.opt').forEach(o => o.onclick = null);
-
+export function showCorrectOpt() {
     const correct = questions[currentIndex].correct_answer;
+    document.querySelectorAll('.opt').forEach(o => {
+        if (o.textContent.trim().includes(correct)) o.classList.add('correct'); //add class correct to the correct option to highlight it
+    });
+}
+function selOpt(el, selected) {
+            // prevent double clicking
+            clearInterval(intervalId);//stop the time when the user selects an option
+            document.querySelectorAll('.opt').forEach(o => o.onclick = null);
 
-    if (selected === correct) {
-        el.classList.add('correct');
-    } else {
-        el.classList.add('wrong'); // added class to highlight it after getting clicked , if wrong selected
-        // also highlight the correct one
-        document.querySelectorAll('.opt').forEach(o => {
-            if (o.textContent.trim().includes(correct)) o.classList.add('correct'); //add class correct to the correct option to highlight it
-        });
-    }
+            const correct = questions[currentIndex].correct_answer;
 
-    setTimeout(() => {
-        nextQuestion();
-    }, 1500);
+            if (selected === correct) {
+                el.classList.add('correct');
+            } else {
+                el.classList.add('wrong'); // added class to highlight it after getting clicked , if wrong selected
+                // also highlight the correct one
+                showCorrectOpt();
+}
+
+setTimeout(() => {
+    nextQuestion();
+}, 1500);
 }
 
 // start with first question
 generateQuestion(questions[currentIndex]);
-startTimer();
 
 window.selOpt = selOpt;
 /*```
