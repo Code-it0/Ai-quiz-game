@@ -1,4 +1,6 @@
 import { timeleft } from './timer.js';
+import { loadFromStorage } from '../results.js';
+
 
 let streakXP = 10
 export function calculateXP(scoreData, streak) {
@@ -12,4 +14,13 @@ export function calculateXP(scoreData, streak) {
         streakXP += Math.round(totalXP * streakMultiplier); //only stores points of streak
     }
     return totalXP + streakXP;
+}
+
+export function totalXP(){
+    const data = loadFromStorage(); // load current score data (index 0 since it's the most recent)
+    let totalxp=0;
+    data.forEach((entry) => {
+        totalxp += entry.xp;
+    });
+    return totalxp;
 }

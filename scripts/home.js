@@ -1,11 +1,22 @@
+import { checkDailyStreak } from "./utils/streak.js";
+import { totalXP } from "./utils/XP.js";
+import { generateLevel } from "./utils/level.js";
+
 export let quizTopic, timePerQue, difficulty, rounds; // getting updated by event listener in quiz.js
+//assigning default values to the variables 
+quizTopic ='Javascript basics';
+timePerQue = '5';
+difficulty = 'Auto-Adapt';
+rounds ='10';
 
-quizTopic = document.querySelector('.js-topic-input').value.trim() || 'Javascript basics';
+//updating the hero section
+checkDailyStreak(); //updating the streak badge in hero section
 
-timePerQue = document.querySelector('.js-time-input').value.trim('SEC') || '5';
-difficulty = document.querySelector('.js-diff-input').value.trim() || 'Auto-Adapt';
+const xpElement = document.querySelector('.js-total-xp');
+if (xpElement) xpElement.textContent = totalXP(); // updating the totalXP badge in hero section
 
-rounds = document.querySelector('.js-rounds-input').value.trim() || '10';
+const levelElement = document.querySelector('.js-level');
+if (levelElement) levelElement.textContent = generateLevel(); // updating the level badge in hero section
 
 document.querySelector('.js-launch-btn').addEventListener('click', () => {
     quizTopic = document.querySelector('.js-topic-input').value.trim() || 'Javascript-basics';// get the quiz topic from the input field, default to 'Javascript-basics' if empty

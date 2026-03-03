@@ -37,7 +37,9 @@ export function loadFromStorage(index) {
                 wrong: 2,
                 totalAnswered: 10,
                 totalQuestions: 10,
-                accuracy:80
+                accuracy:80,
+                averageTime:2,
+                xp:1000
             }
         ];
     if (index) data = data[index]; // if index provided, return only that score data instead of all data
