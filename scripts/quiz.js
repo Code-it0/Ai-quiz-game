@@ -1,9 +1,11 @@
 import { startTimer, stopTimer, addTimeleft, totalTimeTaken } from './utils/timer.js';
-import { questions } from './data/questions.js';
+import { questions,SaveQuizINfo } from './data/questions.js';
 import { saveToStorage } from './results.js';
 import { calculateXP } from './utils/XP.js';
 import {updateStreak} from './utils/streak.js';
-import { quizTopic,difficulty,rounds} from './home.js';
+import {quizInfo} from './home.js';
+
+let { quizTopic,difficulty,rounds} = quizInfo;
 
 let currentIndex = 0; // tracks which question we're on
 
@@ -11,6 +13,7 @@ let currentIndex = 0; // tracks which question we're on
 //socoring variables 
 
 const scoreData = {
+    quizId : null, // will be assigned when saving quiz info to local storage (same as quizInfo.quizId)
     correct: 0, //correct answers
     wrong: 0, // worng answers
     totalAnswered: 0, //total questions answeres (including wrong)
@@ -18,7 +21,6 @@ const scoreData = {
     accuracy: 0, //accuracy percentage
     xp :0
 };
-console.log(scoreData.totalQuestions);
 
 let xp = 0, accuracy = 0, streak = 0;  //variables for left panel and for updating scoreData
 
@@ -80,10 +82,9 @@ export function nextQuestion() {
     } else {
         generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel to remove 'now' class from last cell when quiz is over
         // all questions done → go to results
-        console.log('quiz over');
         scoreData['averageTime'] = Math.round(totalTimeTaken / questions.length); // calculate average time per question
-        console.log(scoreData);
         saveToStorage(scoreData);
+        SaveQuizINfo(quizInfo); //only save when quiz is over
         go('results', 2);
     }
 }

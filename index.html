@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEURAL QUIZ — HUD</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -222,36 +223,75 @@
         </div>
       </div>
 
+      <!-- ── NEURAL PERFORMANCE MATRIX (Radar + Stats) ── -->
       <div class="section-tag" style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:0.6rem">
-        INTEL REPORT — TOPIC PERFORMANCE
+        NEURAL PERFORMANCE MATRIX
         <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);display:block"></span>
       </div>
 
-      <div class="hm-panel">
-        <div class="hm-row">
-          <div class="hm-topic">ARRAYS</div>
-          <div class="hm-track"><div class="hm-fill" style="width:90%;background:linear-gradient(90deg,var(--green),#00cc66);box-shadow:0 0 8px var(--green)"></div></div>
-          <div class="hm-right"><div class="hm-pct">90%</div></div>
+      <div class="radar-section">
+
+        <!-- Radar Chart -->
+        <div class="radar-card">
+          <div class="radar-canvas-wrap">
+            <canvas id="radarChart"></canvas>
+          </div>
         </div>
-        <div class="hm-row">
-          <div class="hm-topic">FUNCTIONS</div>
-          <div class="hm-track"><div class="hm-fill" style="width:80%;background:linear-gradient(90deg,var(--cyan),#0099cc);box-shadow:0 0 8px var(--cyan)"></div></div>
-          <div class="hm-right"><div class="hm-pct">80%</div></div>
+
+        <!-- Stat bars beside radar -->
+        <div class="stat-list">
+          <div class="stat-item">
+            <div class="stat-item-top">
+              <div class="stat-name">ACCURACY</div>
+              <div class="stat-val js-stat-accuracy" style="color:var(--cyan)">0%</div>
+            </div>
+            <div class="stat-bar-bg"><div class="stat-bar js-bar-accuracy" style="width:0%;background:linear-gradient(90deg,var(--cyan),#0099cc);box-shadow:0 0 6px var(--cyan)"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-top">
+              <div class="stat-name">SPEED</div>
+              <div class="stat-val js-stat-speed" style="color:var(--green)">0%</div>
+            </div>
+            <div class="stat-bar-bg"><div class="stat-bar js-bar-speed" style="width:0%;background:linear-gradient(90deg,var(--green),#00cc66);box-shadow:0 0 6px var(--green)"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-top">
+              <div class="stat-name">STREAK</div>
+              <div class="stat-val js-stat-streak" style="color:var(--orange)">0%</div>
+            </div>
+            <div class="stat-bar-bg"><div class="stat-bar js-bar-streak" style="width:0%;background:linear-gradient(90deg,var(--orange),#cc5500);box-shadow:0 0 6px var(--orange)"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-top">
+              <div class="stat-name">CONSISTENCY</div>
+              <div class="stat-val js-stat-consistency" style="color:var(--yellow)">0%</div>
+            </div>
+            <div class="stat-bar-bg"><div class="stat-bar js-bar-consistency" style="width:0%;background:linear-gradient(90deg,var(--yellow),#cc9900);box-shadow:0 0 6px var(--yellow)"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-top">
+              <div class="stat-name">DIFFICULTY</div>
+              <div class="stat-val js-stat-difficulty" style="color:var(--red)">0%</div>
+            </div>
+            <div class="stat-bar-bg"><div class="stat-bar js-bar-difficulty" style="width:0%;background:linear-gradient(90deg,var(--red),#cc0033);box-shadow:0 0 6px var(--red)"></div></div>
+          </div>
         </div>
-        <div class="hm-row">
-          <div class="hm-topic">CLOSURES</div>
-          <div class="hm-track"><div class="hm-fill" style="width:55%;background:linear-gradient(90deg,var(--yellow),#cc9900);box-shadow:0 0 6px var(--yellow)"></div></div>
-          <div class="hm-right"><div class="hm-pct">55%</div></div>
-        </div>
-        <div class="hm-row">
-          <div class="hm-topic">PROMISES</div>
-          <div class="hm-track"><div class="hm-fill" style="width:40%;background:linear-gradient(90deg,var(--red),#cc0033);box-shadow:0 0 6px var(--red)"></div></div>
-          <div class="hm-right"><div class="hm-pct">40%</div><div class="weak-tag">WEAK</div></div>
-        </div>
-        <div class="hm-row">
-          <div class="hm-topic">DOM API</div>
-          <div class="hm-track"><div class="hm-fill" style="width:30%;background:linear-gradient(90deg,var(--red),#cc0033);box-shadow:0 0 6px var(--red)"></div></div>
-          <div class="hm-right"><div class="hm-pct">30%</div><div class="weak-tag">WEAK</div></div>
+
+      </div>
+
+      <!-- ── BATTLE LOG ── -->
+      <div class="section-tag" style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:0.6rem;margin-top:0.5rem">
+        BATTLE LOG — ROUND REPLAY
+        <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);display:block"></span>
+      </div>
+
+      <div class="battle-log-card">
+        <div class="timeline-track js-timeline"></div>
+        <div class="tl-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>HIT</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>FAILED</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>SKIPPED</div>
+          <div class="legend-item" style="margin-left:auto;font-size:0.52rem">BAR HEIGHT = RESPONSE SPEED</div>
         </div>
       </div>
 

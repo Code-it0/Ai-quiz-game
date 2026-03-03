@@ -2,7 +2,6 @@ import { totalXP } from "./XP.js";
 export function generateLevel(){
     const xp = totalXP(); // load current score data (index 0 since it's the most recent)
     // Implement level generation logic based on XP
-    console.log(xp);
     let level =1;
     let basexp =500;
     let temp = Math.floor(basexp * level * level);
