@@ -5,7 +5,7 @@ import { calculateXP } from './utils/XP.js';
 import {updateStreak} from './utils/streak.js';
 import {quizInfo} from './home.js';
 
-let { quizTopic,difficulty,rounds} = quizInfo;
+let { quizTopic,rounds} = quizInfo;
 
 let currentIndex = 0; // tracks which question we're on
 
@@ -19,7 +19,8 @@ const scoreData = {
     totalAnswered: 0, //total questions answeres (including wrong)
     totalQuestions: questions.length, //total questions
     accuracy: 0, //accuracy percentage
-    xp :0
+    xp :0,
+    maxStreak:0
 };
 
 let xp = 0, accuracy = 0, streak = 0;  //variables for left panel and for updating scoreData
@@ -33,14 +34,16 @@ function generateQuizHtml(){
 generateQuizHtml();
 
 function generateDiffLbl(){
+    const {difficulty} = quizInfo;
     const diffElement = document.querySelector('.js-diff-lbl');
     const diffOptions = ['EASY', 'MEDIUM', 'HARD'];
-    if(difficulty === "AUTO-ADAPT") {
+    if((difficulty).toUpperCase() === "AUTO-ADAPT") {
         diffElement.classList.add('easy');
-        diffElement.textContent = '◈ ' + diffOptions[0].toUpperCase(); 
-        return;}
-    else if(difficulty === diffOptions[1]) diffElement.classList.add('med');
-    else if(difficulty === diffOptions[2]) diffElement.classList.add('hard');
+        diffElement.textContent = '◈ ' + diffOptions[0].toUpperCase();  //default set to easy (auto adapt = easy)
+        return;
+    }
+    else if(difficulty.toUpperCase() === diffOptions[1]) diffElement.classList.add('med');
+    else if(difficulty.toUpperCase() === diffOptions[2]) diffElement.classList.add('hard');
     else diffElement.classList.add('easy'); // default to easy if auto-adapt or any other value
     diffElement.textContent = '◈ ' + difficulty.toUpperCase();
 }
@@ -76,15 +79,15 @@ function generateQuestion(question) {
 
 export function nextQuestion() {
     currentIndex++;
-    console.log('next question');
     if (currentIndex < questions.length) {
         generateQuestion(questions[currentIndex]);
     } else {
         generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel to remove 'now' class from last cell when quiz is over
         // all questions done → go to results
+        console.log(scoreData.maxStreak);
         scoreData['averageTime'] = Math.round(totalTimeTaken / questions.length); // calculate average time per question
-        saveToStorage(scoreData);
         SaveQuizINfo(quizInfo); //only save when quiz is over
+        saveToStorage(scoreData);
         go('results', 2);
     }
 }
@@ -107,6 +110,7 @@ function selOpt(el, selected) {
         el.classList.add('correct');
         scoreData.correct++;
         streak++;
+        if (streak>scoreData.maxStreak) scoreData.maxStreak = streak;
         updateProgGrid(currentIndex + 1,'correct'); // update progress grid panel for correct answer
         addTimeleft(); // add remaining time to timeleft array for XP calculation(XP only for correct Answers)
     } else {
@@ -145,13 +149,7 @@ function updateLeftPanel() {
     let accuracyBar = document.querySelector('.js-accuracy-bar');
     accuracyBar.style.width = `${Math.max(2, accuracy)}%`; //updating accuracy bar width according to accuracy percentage ( minimum width 2% for visibility when accuracy is very low)
 
-    let streakPanel = document.querySelector('.js-streak-txt');
-    streakPanel.textContent = `x${streak} COMBO`; //updating streak panel when an option is selected
-    let comboPanel = document.querySelector('.js-combo-display');
-    comboPanel.textContent = `🔥 COMBO x${streak} · +80 BONUS XP`; //updating streak panel when an option is selected
     updateStreak(streak); 
-
-    console.log(xp, accuracy);
 }
 
 function generateProgGridPanel(questions, Qno) {

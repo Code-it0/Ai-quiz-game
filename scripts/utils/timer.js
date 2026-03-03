@@ -10,7 +10,6 @@ export function startTimer(onTimeUP) {
     bar.style.background = 'linear-gradient(90deg, var(--cyan), var(--green))';
 
     intervalId = setInterval(() => {
-        console.log(t);
         if (t > 0) t--;
         else {
             clearInterval(intervalId);

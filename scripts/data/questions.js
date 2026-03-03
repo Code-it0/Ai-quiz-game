@@ -44,6 +44,7 @@ export function loadQuizInfo(quizId) {
         rounds: '10'
       }
     ];
-  if (quizId) data = data[quizId - 1]; // if index provided, return only that score data instead of all data
+  if (quizId) data = data[data.length-quizId]; // if index provided, return only that score data instead of all data 
+  // newest item at index 0 hence quizID 15 is at 0 due to data.splice(0,0,..);
   return data;
 }

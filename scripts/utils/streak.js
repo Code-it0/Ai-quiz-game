@@ -1,7 +1,6 @@
 export function updateStreak(streak) {
     // --- 1. GET ALL ELEMENTS ---
     const comboDiv = document.querySelector('.js-combo-display');
-    console.log('streak:',streak);
     // Elements for Section 2
     const streakBadege = document.querySelector('.streak-badge');
     const fireEl = document.querySelector('.streak-fire');
