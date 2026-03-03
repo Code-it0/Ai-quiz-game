@@ -2,7 +2,7 @@ import { timeleft } from './timer.js';
 import { loadFromStorage } from '../results.js';
 
 
-let streakXP = 10
+let streakXP = 10;
 export function calculateXP(scoreData, streak) {
     const { correct: score, accuracy } = scoreData;
     const baseXP = score * 100;           // 100 per correct answer
@@ -23,4 +23,8 @@ export function totalXP(){
         totalxp += entry.xp;
     });
     return totalxp;
+}
+
+export function resetStreakXP() {
+    streakXP = 10; // Or 0, depending on what your baseline should be!
 }

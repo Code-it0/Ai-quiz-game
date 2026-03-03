@@ -44,7 +44,44 @@ export function loadQuizInfo(quizId) {
         rounds: '10'
       }
     ];
-  if (quizId) data = data[data.length-quizId]; // if index provided, return only that score data instead of all data 
+  if (quizId) data = data[data.length - quizId]; // if index provided, return only that score data instead of all data 
   // newest item at index 0 hence quizID 15 is at 0 due to data.splice(0,0,..);
   return data;
+}
+
+[
+  { question: "What does JSON stand for?", correct: true, timeTaken: 1, skipped: false },
+  { question: "Which method adds to array?", correct: true, timeTaken: 2, skipped: false },
+  { question: "typeof null return?", correct: false, timeTaken: 4, skipped: false },
+]
+
+let QuestionLog = [];
+
+export function questionLogPush(entry) {
+  console.log(entry);
+  QuestionLog.push(entry);
+  console.log('pushing entry:', JSON.stringify(entry));
+}
+
+export function SaveQuestionLog() {
+  let questionLog = LoadQuestionLog();
+  console.log(questionLog);
+  questionLog.splice(0, 0, QuestionLog); //adding global question log questions data to the 0th index , without deletig any previous data 
+  console.log(questionLog.length);
+  localStorage.setItem('questionLog', JSON.stringify(questionLog));
+  QuestionLog = []; //empting the global array once data saved
+}
+export function LoadQuestionLog(quizId) {
+  let questionLog = JSON.parse(localStorage.getItem('questionLog')) || [
+    [
+      { question: "What does JSON stand for?", correct: true, timeTaken: 1, skipped: false },
+      { question: "Which method adds to end of array?", correct: false, timeTaken: 4, skipped: false },
+      { question: "What does typeof null return?", correct: false, timeTaken: 0, skipped: true },
+      { question: "Which keyword declares block-scoped var?", correct: true, timeTaken: 2, skipped: false },
+      { question: "Output of 0.1 + 0.2 === 0.3?", correct: false, timeTaken: 5, skipped: false },
+    ]
+  ];
+  console.log(questionLog.length);
+  if (quizId) questionLog = questionLog[questionLog.length - quizId];
+  return questionLog;
 }

@@ -33,6 +33,7 @@ export let totalTimeTaken =0; //varible to calculate average time taken for each
 export function stopTimer() {
     clearInterval(intervalId);
     totalTimeTaken+=timePerQue-t; // totaltime-timeleft = time taken
+    return timePerQue-t; //returning this value because to updaate question log when user clicks option , timer stops inside selOption()[quiz.js]
 }
 
 export let timeleft=0; //variable to store time left for XP calculation (only for correct answers)
@@ -40,6 +41,12 @@ export function addTimeleft(){
     timeleft+=t;
     console.log(timeleft);
 }
+
+export function resetTimerStats() {
+    totalTimeTaken = 0;
+    timeleft = 0;
+}
+
 /*
 function totalTimerBar(){
     const totalBar = document.querySelector('.js-xp-bar');

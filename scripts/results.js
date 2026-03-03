@@ -1,4 +1,4 @@
-import { loadQuizInfo } from './data/questions.js';
+import { loadQuizInfo,LoadQuestionLog } from './data/questions.js';
 import { quizInfo } from './home.js';
 export function generateResults(scoreData) {
     const { correct, wrong, totalAnswered, totalQuestions, accuracy, averageTime, xp } = scoreData;
@@ -22,8 +22,15 @@ export function generateResults(scoreData) {
 
     document.querySelector('.js-score-dial-val').textContent = `${accuracy}%`;
 
-    //Generating results 
+    //Generating radar results 
     generateRadar(scoreData,prevData);
+    console.log(scoreData.quizId);
+    
+    //generating battlelog results
+    let currentQuizInfo = loadQuizInfo(scoreData.quizId);
+    let timePerQue = currentQuizInfo ? currentQuizInfo.timePerQue : 5; // fallback to 5
+    // Pass the correctly fetched time limit instead of scoreData.timePerQue
+    generateBattleLog(LoadQuestionLog(scoreData.quizId), timePerQue);
 
 }
 
@@ -67,7 +74,8 @@ function generateRadarData(scoreData) {
         // Snap the provided values as it how radar maps show data snap to nearest multiple of 10
         accuracy: snapToTen(scoreData.accuracy),
         speed: snapToTen((1 - scoreData.averageTime / timePerQue) * 100),
-        streakScore: snapToTen((scoreData.maxStreak / scoreData.totalQuestions) * 100),
+        streakScore: snapToTen(Math.pow(scoreData.maxStreak / scoreData.totalQuestions, 0.7) * 100),
+        // Using 0.7 as the exponent (1 is linear, 0.5 is square root)
         consistency: scoreData.correct > 0 ? snapToTen((scoreData.maxStreak / scoreData.correct) * 100) : 0,
         difficulty: difficultyLevel,
         diffScore: difficultyLevel === 'HARD' ? 100 : difficultyLevel === 'MEDIUM' ? 60 : 30
@@ -161,6 +169,7 @@ function generateRadar(scoreData, prevData) {
 }
 
 function generateBattleLog(questionLog, timePerQue) {
+    console.log(questionLog);
     const timeline = document.querySelector('.js-timeline');
     timeline.innerHTML = '';
     const MAX_H = 52;
@@ -196,18 +205,16 @@ function generateBattleLog(questionLog, timePerQue) {
 }
 
 generateRadar({
-    quizId: 16,
+    quizId: 1,
     accuracy: 80,
     averageTime: 2,
     maxStreak: 5, //done
     correct: 8,
     totalQuestions: 10,
     difficulty: 'EASY' //cmg from quizInfo 
-}, null);
+}, null); //default quiz id = 1
 
-generateBattleLog([
-    { question: "What does JSON stand for?", correct: true, timeTaken: 1, skipped: false },
-    { question: "Which method adds to array?", correct: true, timeTaken: 2, skipped: false },
-    { question: "typeof null return?", correct: false, timeTaken: 4, skipped: false },
-], 5);
+console.log(LoadQuestionLog(4));
+
+generateBattleLog(LoadQuestionLog(4), 5); //defaualt => analysis of quizId =1 
 

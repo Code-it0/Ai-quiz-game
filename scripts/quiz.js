@@ -1,7 +1,7 @@
-import { startTimer, stopTimer, addTimeleft, totalTimeTaken } from './utils/timer.js';
-import { questions,SaveQuizINfo } from './data/questions.js';
+import { startTimer, stopTimer, addTimeleft, totalTimeTaken,resetTimerStats} from './utils/timer.js';
+import { questions,SaveQuizINfo,questionLogPush,SaveQuestionLog } from './data/questions.js';
 import { saveToStorage } from './results.js';
-import { calculateXP } from './utils/XP.js';
+import { calculateXP ,resetStreakXP } from './utils/XP.js';
 import {updateStreak} from './utils/streak.js';
 import {quizInfo} from './home.js';
 
@@ -9,9 +9,8 @@ let { quizTopic,rounds} = quizInfo;
 
 let currentIndex = 0; // tracks which question we're on
 
-
+let questionEntry = { question: '', correct: false , timeTaken:0, skipped: false };
 //socoring variables 
-
 const scoreData = {
     quizId : null, // will be assigned when saving quiz info to local storage (same as quizInfo.quizId)
     correct: 0, //correct answers
@@ -59,17 +58,17 @@ function generateQuestion(question) {
         <div class="opt-key">${String.fromCharCode(65 + i)}</div>
         ${opt}
         </div>`;
-
-        generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel for each question
-
-        /*document.querySelector('.js-left-score').textContent = xp; // update XP in left panel
-        document.querySelector('.js-left-accuracy').textContent = `${accuracy}%`; // update accuracy in left panel
-        document.querySelector('.js-streak-txt').textContent = `x${streak} COMBO`; // update streak in left panel
-        document.querySelector('.js-combo-display').textContent =`🔥 COMBO x${streak} · +80 BONUS XP`; //updating bottom streak panel whenn question generated*/
     });
+
+    generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel for each question
+    
+    console.log('gg');
+    questionEntry = { question: '', correct: false , timeTaken:0, skipped: false }; //resetting values
+    questionEntry.question = question.question;
 
     startTimer(() => {
         streak = 0; //reset streak if time runs out
+        questionEntry.skipped = true;
         showCorrectOpt();
         setTimeout(() => {
             nextQuestion();
@@ -79,13 +78,16 @@ function generateQuestion(question) {
 
 export function nextQuestion() {
     currentIndex++;
+    questionLogPush(questionEntry); //push after each question is answered.. hence inside nextQuestion()
     if (currentIndex < questions.length) {
         generateQuestion(questions[currentIndex]);
     } else {
+        currentIndex=0; //reset current index for next quiz attempt
         generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel to remove 'now' class from last cell when quiz is over
         // all questions done → go to results
         console.log(scoreData.maxStreak);
         scoreData['averageTime'] = Math.round(totalTimeTaken / questions.length); // calculate average time per question
+        SaveQuestionLog(); //saving the question log when the game ends
         SaveQuizINfo(quizInfo); //only save when quiz is over
         saveToStorage(scoreData);
         go('results', 2);
@@ -99,7 +101,10 @@ export function showCorrectOpt() {
 }
 function selOpt(el, selected) {
     // prevent double clicking
-    stopTimer();//stop the time when the user selects an option
+    let timeTaken = stopTimer();//stop the time when the user selects an option
+
+    questionEntry.timeTaken = timeTaken; 
+
     scoreData.totalAnswered++; //user attempted the question by selecting an option
     document.querySelectorAll('.opt').forEach(o => o.onclick = null);
 
@@ -110,6 +115,7 @@ function selOpt(el, selected) {
         el.classList.add('correct');
         scoreData.correct++;
         streak++;
+        questionEntry.correct = true;
         if (streak>scoreData.maxStreak) scoreData.maxStreak = streak;
         updateProgGrid(currentIndex + 1,'correct'); // update progress grid panel for correct answer
         addTimeleft(); // add remaining time to timeleft array for XP calculation(XP only for correct Answers)
@@ -130,6 +136,8 @@ function selOpt(el, selected) {
 
 document.querySelector('.js-launch-btn').addEventListener('click', () => {
     // start with first question
+    resetStreakXP();
+    resetTimerStats();
     generateQuizHtml();
     generateQuestion(questions[currentIndex]);
 });
