@@ -1,6 +1,7 @@
 import { loadQuizInfo,LoadQuestionLog } from './data/questions.js';
-import { quizInfo } from './home.js';
-export function generateResults(scoreData) {
+export function generateResults() {
+    const scoreData = loadFromStorage()[0]; // load current score data (index 0 since it's the most recent)
+    const quizInfo = loadQuizInfo()[0]; //load recent quiz info  
     const { correct, wrong, totalAnswered, totalQuestions, accuracy, averageTime, xp } = scoreData;
     (document.querySelector('.js-correct-num')).textContent = correct; //changing score on page
     (document.querySelector('.js-wrong-num')).textContent = wrong; // changing wrong score on page
@@ -39,7 +40,7 @@ export function saveToStorage(scoreData) {
     scoreData.quizId = Sdata.length + 1; // assign quizId based on current length of stored data (1 for first quiz, 2 for second quiz etc.)
     Sdata.splice(0, 0, scoreData); //adding score data to the 0th indext , without deletig any previous data 
     localStorage.setItem('quizScore', JSON.stringify(Sdata));
-    generateResults(scoreData);
+    generateResults();
 }
 export function loadFromStorage(quizId) {
     let data = JSON.parse(localStorage.getItem('quizScore')) ||
@@ -84,7 +85,7 @@ function generateRadarData(scoreData) {
 }
 
 let radarChart = null;
-function generateRadar(scoreData, prevData) {
+export function generateRadar(scoreData, prevData) {
 
     let data = generateRadarData(scoreData);
     const { accuracy, speed, streakScore, consistency, diffScore } = data;
@@ -168,7 +169,7 @@ function generateRadar(scoreData, prevData) {
     });
 }
 
-function generateBattleLog(questionLog, timePerQue) {
+export function generateBattleLog(questionLog, timePerQue) {
     console.log(questionLog);
     const timeline = document.querySelector('.js-timeline');
     timeline.innerHTML = '';
@@ -204,17 +205,6 @@ function generateBattleLog(questionLog, timePerQue) {
     });
 }
 
-generateRadar({
-    quizId: 1,
-    accuracy: 80,
-    averageTime: 2,
-    maxStreak: 5, //done
-    correct: 8,
-    totalQuestions: 10,
-    difficulty: 'EASY' //cmg from quizInfo 
-}, null); //default quiz id = 1
 
-console.log(LoadQuestionLog(4));
-
-generateBattleLog(LoadQuestionLog(4), 5); //defaualt => analysis of quizId =1 
+generateResults(); //defaualt => recent quiz data
 
