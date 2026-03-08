@@ -1,4 +1,4 @@
-import { startTimer, stopTimer, addTimeleft, totalTimeTaken, resetTimerStats } from './utils/timer.js';
+import { startTimer, stopTimer, addTimeleft, totalTimeTaken,timeTakenForQue, resetTimerStats } from './utils/timer.js';
 import { defaultQuestions, fetchQuestions, autoAdaptDifficulty } from './data/questions.js';
 import { saveToStorage, SaveQuizINfo, questionLogPush, SaveQuestionLog } from './data/storage.js';
 import { calculateXP, resetStreakXP } from './utils/XP.js';
@@ -87,11 +87,17 @@ function generateQuestion(question) {
     questionEntry.question = question.question;
     startTimer(onTimesUp);
 }
-
+document.querySelector('.js-nextQuestion-btn').addEventListener('click', () => {
+    if (isQuestionResolved) return; // if question is reolved then return to avoid irregularities
+    onTimesUp(); // directly call onTimesUp function to move to next question when user clicks next button without waiting for timer to run out ( mainly for mobile users who might find it hard to click the options before time runs out)
+    stopTimer(); // stop the timer when user clicks next button to prevent it from running in background and causing unexpected triggers
+});
 function onTimesUp() {
     if (isQuestionResolved) return; // if user has already selected an option and timer runs out at the same time, don't move to next question twice
     isQuestionResolved = true; // mark question as resolved when timer runs out to prevent multiple triggers
     streak = 0; //reset streak if time runs out
+    updateStreak(streak); //update left streak panel when the question is skipped
+
     questionEntry.skipped = true;
     showCorrectOpt();
     setTimeout(() => {
@@ -110,7 +116,7 @@ export function nextQuestion() {
         generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel to remove 'now' class from last cell when quiz is over
         currentIndex = 0; //reset current index for next quiz attempt
         // all questions done → go to results
-        scoreData['averageTime'] = Math.round(totalTimeTaken / questions.length); // calculate average time per question
+        scoreData['averageTime'] = Math.round(totalTimeTaken / scoreData.totalAnswered) || quizInfo.timePerQue; // calculate average time per question , if totalAnswered is 0 (can happen if user skips all questions) then set average time to timePerQue to avoid division by zero and to be fair to the user in XP calculation as well
         SaveQuestionLog(); //saving the question log when the game ends
         SaveQuizINfo(quizInfo); //only save when quiz is over
         saveToStorage(scoreData);
@@ -131,8 +137,8 @@ let isQuestionResolved = false; // to prevent multiple triggers when user clicks
 function selOpt(el, selected) {
     if (isQuestionResolved) return; // prevent multiple triggers
     isQuestionResolved = true; // mark question as resolved when user selects an option
-    let timeTaken = stopTimer();//stop the time when the user selects an option
-
+    stopTimer();//stop the time when the user selects an option
+    let timeTaken = timeTakenForQue(); // calculate time taken for the question when user selects an option to update question log and for XP calculation
     questionEntry.timeTaken = timeTaken;
 
     scoreData.totalAnswered++; //user attempted the question by selecting an option

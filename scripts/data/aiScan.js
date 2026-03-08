@@ -6,9 +6,9 @@ function generateTopicsPrompt() {
   const recentTopics = history.slice(-10).map(quiz => quiz.quizTopic); //gives an array with max 10 elements , less if history has less elements
 
   let prompt;
-  
+
   // If they haven't played anything yet (just the default game)
-  if (recentTopics.length === 1 && recentTopics[0] === 'Javascript basics') { 
+  if (recentTopics.length === 1 && recentTopics[0] === 'Javascript basics') {
     prompt = `Generate 8 highly engaging, popular quiz topics for a trivia game. 
     CRITICAL: Each topic MUST be strictly 1 to 2 words maximum (e.g., "Geography", "Pop Culture"). Do NOT use phrases like "Introduction to" or "Basics of".
     Return ONLY a JSON object with a single root key named exactly "aiTopics" containing an array of 8 strings.`;
@@ -24,10 +24,11 @@ function generateTopicsPrompt() {
 
 
 export async function fetchTopics() {
-  const myPrompt = generateTopicsPrompt();
-  const GROQ_API_KEY = loadApiKey(); 
 
   try {
+    const GROQ_API_KEY = loadApiKey();
+    if (!GROQ_API_KEY) throw new Error("API key not registered"); // Load API key or throw an error to go with default topics if not found
+    const myPrompt = generateTopicsPrompt();
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -77,23 +78,23 @@ function saveTopics(topics) {
 function loadTopics() {
   let data = JSON.parse(localStorage.getItem('topics')) ||
     [
-    "Web Development",
-    "Anime & Manga",
-    "Modern Cinema",
-    "Video Games",
-    "Fitness & Health",
-    "World Geography",
-    "Hip Hop",
-    "General Science"];
+      "Web Development",
+      "Anime & Manga",
+      "Modern Cinema",
+      "Video Games",
+      "Fitness & Health",
+      "World Geography",
+      "Hip Hop",
+      "General Science"];
   return data;
 }
 
-export function generateTopicsHtml(){
+export function generateTopicsHtml() {
   const topics = loadTopics();
   const topicsContainer = document.querySelector('.js-topics');
   if (!topicsContainer) return; // If the container doesn't exist, exit the function
   topicsContainer.innerHTML = ''; // Clear existing topics
-  topics.forEach(topic =>{
+  topics.forEach(topic => {
     const div = document.createElement('div');
     div.classList.add('chip');
     div.textContent = topic;

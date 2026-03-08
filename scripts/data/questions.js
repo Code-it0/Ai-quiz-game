@@ -1,23 +1,25 @@
 import { getReportCard } from "./storage.js";
-import { startLoadingPage, stopLoadingPage,errorToast,loadedToast } from "../utils/loader.js";
-import {loadApiKey} from './api.js';
+import { startLoadingPage, stopLoadingPage, errorToast, loadedToast } from "../utils/loader.js";
+import { loadApiKey } from './api.js';
 
 export async function fetchQuestions(topic, difficulty, rounds) {
   startLoadingPage(); // Show loading screen while fetching questions
-  let prompt;
-  let autoAdaptFlag = 0;
-  if (difficulty.toUpperCase() === "AUTO-ADAPT") {
-    //get the report cart  = HistoryTopic: JavaScript, Difficulty: Medium, Accuracy: 40%. Topic: React, Difficulty: Easy, Accuracy: 100%
-    const userHistory = getReportCard(); //array of objects where each object represent 1 quiz game
-    prompt = generateAutoAdaptPrompt(topic, rounds, userHistory);
-    autoAdaptFlag = 1;
-  } else {
-    // Use your normal, hardcoded prompt
-    prompt = generateNormalPrompt(topic, difficulty, rounds);
-  }
-
-  const GROQ_API_KEY = loadApiKey(); // Reminder: move to .env later!
   try {
+    const GROQ_API_KEY = loadApiKey();
+    if (!GROQ_API_KEY) throw new Error("API key not registered"); // Load API key or throw an error to start the quiz with default questions  if not found
+
+    let prompt;
+    let autoAdaptFlag = 0;
+    if (difficulty.toUpperCase() === "AUTO-ADAPT") {
+      //get the report cart  = HistoryTopic: JavaScript, Difficulty: Medium, Accuracy: 40%. Topic: React, Difficulty: Easy, Accuracy: 100%
+      const userHistory = getReportCard(); //array of objects where each object represent 1 quiz game
+      prompt = generateAutoAdaptPrompt(topic, rounds, userHistory);
+      autoAdaptFlag = 1;
+    } else {
+      // Use your normal, hardcoded prompt
+      prompt = generateNormalPrompt(topic, difficulty, rounds);
+    }
+
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -128,7 +130,7 @@ export let defaultQuestions = [
     correct_answer: "<script src='app.js'>",
     difficulty_level: "easy"
   }
-  ,{
+  , {
     question: "What will console.log(typeof NaN) output?",
     options: ["NaN", "number", "undefined", "string"],
     correct_answer: "number",
