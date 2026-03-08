@@ -1,309 +1,508 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURAL QUIZ — HUD</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEURAL QUIZ — HUD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles/loading.css">
+  <link rel="stylesheet" href="styles/apiOverlay.css">
+  <!-- <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet"> -->
 </head>
+</head>
+
 <body>
+  <!-- loading bar on top of every other section  -->
+  <div class="loading-overlay" id="loader" style="display:none">
 
-<!-- HUD BAR -->
-<div class="hud-bar">
-  <div class="hud-logo">NEURAL<span>QUIZ</span></div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="go('home',0)">MISSION</button>
-    <button class="nav-tab"        onclick="go('quiz',1)">BATTLE</button>
-    <button class="nav-tab"        onclick="go('results',2)">DEBRIEF</button>
+    <!-- toast html -->
+    <div class="toast js-toast" id="toast">
+      <span class="toast-icon" id="toastIcon">⚠</span>
+      <span id="toastMsg">AI OFFLINE — LOADING BACKUP QUESTIONS</span>
+      <div class="toast-progress"></div>
+    </div>
+    <!-- /toast html -->
+    <div class="glitch-wrap">
+      <div class="bracket bracket-tl"></div>
+      <div class="bracket bracket-tr"></div>
+      <div class="bracket bracket-bl"></div>
+      <div class="bracket bracket-br"></div>
+      <div class="glitch-scan"></div>
+      <div class="glitch-main">◈</div>
+    </div>
+
+    <div class="loading-title">NEURAL SYNC</div>
+
+    <div class="loading-status">
+      <span id="statusMsg">INITIALIZING AI CORE...</span>
+    </div>
+
+    <div class="loading-bar-wrap">
+      <div class="loading-bar-bg">
+        <div class="loading-bar-fill" id="barFill"></div>
+      </div>
+      <div class="loading-bar-lbl">
+        <span>FETCHING QUESTIONS</span>
+        <span id="pct">0%</span>
+      </div>
+    </div>
+
+    <div class="loading-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
   </div>
-  <div class="hud-time" id="clock">00:00:00</div>
-</div>
+  <!-- /loading overlay -->
 
-<div class="pages">
+  <!-- Api Overlay -->
+  <div class="api-overlay" id="apiOverlay" style="display: none;">
+    <div class="api-panel" id="apiPanel">
 
-  <!-- ═══════ HOME / MISSION SELECT ═══════ -->
-  <div class="page active" id="home">
-
-    <div class="home-left">
-      <div class="mission-tag">MISSION SELECT</div>
-      <div class="home-title">
-        <div class="line1">TRAIN YOUR</div>
-        <div class="line2">NEURAL</div>
-        <div class="line3">NETWORK.</div>
-      </div>
-      <p class="home-desc">
-        AI generates adaptive quiz missions. Your performance data shapes the next challenge. Weakness detected — difficulty increases.
-      </p>
-      <div class="player-hud">
-        <div class="phud-box">
-          <div class="phud-label">LEVEL</div>
-          <div class="phud-val js-level ">07</div>
+      <!-- HEADER -->
+      <div class="api-header">
+        <div class="api-header-icon">◈</div>
+        <div class="api-header-text">
+          <div class="api-header-title">AI CORE SETUP</div>
+          <div class="api-header-sub">GROQ API KEY REQUIRED TO GENERATE QUESTIONS</div>
         </div>
-        <div class="phud-box">
-          <div class="phud-label">TOTAL XP</div>
-          <div class="phud-val js-total-xp">2840</div>
+        <div class="first-time-badge">FIRST LAUNCH</div>
+      </div>
+
+      <!-- BODY — input state -->
+      <div class="api-body" id="apiBody">
+
+        <div class="api-desc">
+          Neural Quiz uses <strong>Groq AI</strong> to generate adaptive questions in real time.
+          Enter your API key below — it's stored only in your browser and never sent anywhere else.
         </div>
-        <div class="phud-box">
-          <div class="phud-label">STREAK</div>
-          <div class="phud-val js-daily-streak" style="color:var(--orange);text-shadow:0 0 12px var(--orange)">🔥 5</div>
-        </div>
-      </div>
-    </div>
 
-    <div class="home-right">
-      <div class="section-tag">TARGET SUBJECT</div>
-
-      <div class="topic-field">
-        <div class="field-icon">&gt;_</div>
-        <input class="topic-input js-topic-input" id="topicInput" type="text" placeholder="ENTER SUBJECT — e.g. JavaScript, Photosynthesis…" />
-        <button class="ai-btn" onclick="toggleChips()">AI SCAN</button>
-      </div>
-
-      <div class="chips" id="chips" style="display:none">
-        <div class="chip" onclick="pick(this)">REACT HOOKS</div>
-        <div class="chip" onclick="pick(this)">DATA STRUCTURES</div>
-        <div class="chip" onclick="pick(this)">INDIAN HISTORY</div>
-        <div class="chip" onclick="pick(this)">PHOTOSYNTHESIS</div>
-        <div class="chip" onclick="pick(this)">PYTHON BASICS</div>
-        <div class="chip" onclick="pick(this)">CALCULUS</div>
-        <div class="chip" onclick="pick(this)">OS CONCEPTS</div>
-        <div class="chip" onclick="pick(this)">WORLD WAR II</div>
-      </div>
-
-      <div class="section-tag">MISSION PARAMETERS</div>
-
-      <div class="cfg-grid">
-        <div class="cfg-box">
-          <div class="cfg-label">ROUNDS</div>
-          <select class="js-rounds-input">
-            <option>10</option>
-            <option>15</option>
-            <option>20</option>
-          </select>
-        </div>
-        <div class="cfg-box">
-          <div class="cfg-label">THREAT LEVEL</div>
-          <select class="js-diff-input">
-            <option>AUTO-ADAPT</option>
-            <option>EASY</option>
-            <option>MEDIUM</option>
-            <option>HARD</option>
-          </select>
-        </div>
-        <div class="cfg-box">
-          <div class="cfg-label">TIME / ROUND</div>
-          <select class ="js-time-input">
-            <option>30 SEC</option>
-            <option>45 SEC</option>
-            <option>60 SEC</option>
-            <option>UNLIMITED</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="launch-btn js-launch-btn" onclick = "setTimeout(()=>go('quiz',1),500)">
-        ◈ &nbsp; LAUNCH MISSION &nbsp; ◈
-      </button>
-    </div>
-
-  </div><!-- /home -->
-
-  <!-- ═══════ QUIZ / BATTLE ═══════ -->
-  <div class="page" id="quiz" style="display:none">
-
-    <div class="quiz-sidebar">
-      <div class="sb-block" style="background:#00e5ff08;border-color:#00e5ff22">
-        <div class="sb-lbl">SUBJECT</div>
-        <div class="js-quiz-topic" style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--cyan);letter-spacing:1px;line-height:1.4">JAVASCRIPT<br>BASICS</div>
-      </div>
-
-      <div class="sb-block">
-        <div class="sb-lbl">TIME REMAINING</div>
-        <div class="sb-num" style="color:var(--cyan);text-shadow:0 0 15px var(--cyan)" id="timer">0:42</div>
-        <div class="xp-bar-bg"><div class="xp-bar" style="background:linear-gradient(90deg,var(--cyan),var(--green));width:70%"></div></div>
-      </div>
-
-      <div class="sb-block">
-        <div class="sb-lbl">SCORE</div>
-        <div class="sb-num js-left-score" style="color:var(--orange);text-shadow:0 0 15px var(--orange)">+0</div>
-      </div>
-
-      <div class="sb-block">
-        <div class="sb-lbl">ACCURACY</div>
-        <div class="sb-num js-left-accuracy" style="color:var(--yellow);text-shadow:0 0 10px var(--yellow);font-size:1.3rem">0%</div>
-        <div class="xp-bar-bg" style="margin-top:0.4rem">
-          <div class="xp-bar js-accuracy-bar" style="background:linear-gradient(90deg,var(--yellow),var(--orange));width:1%"></div>
-        </div>
-      </div>
-
-      <div class="sb-block">
-        <div class="sb-lbl js-prog-lbl">PROGRESS · 1/10</div>
-        <div class="prog-grid js-prog-grid " data-generated="0">
-          <!-- <div class="prog-cell now" id="psq-1"></div>
-          <div class="prog-cell" id="psq-2"></div>
-          <div class="prog-cell" id="psq-3"></div>
-          <div class="prog-cell" id="psq-4"></div>
-          <div class="prog-cell" id="psq-5"></div>
-          <div class="prog-cell" id="psq-6"></div>
-          <div class="prog-cell" id="psq-7"></div>
-          <div class="prog-cell" id="psq-8"></div>
-          <div class="prog-cell" id="psq-9"></div> -->
-        </div>
-      </div>
-
-      <div class="streak-badge" style="display:none;">
-        <div class="streak-fire">🔥</div>
-        <div>
-          <div class="streak-txt js-streak-txt">x0 COMBO</div>
-          <div class="streak-sub js-streak-msg">KEEP GOING</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="quiz-main">
-      <div class="q-topbar">
-        <span class="q-id js-round-lbl">ROUND 07 / 10</span>
-        <span class="diff-hud js-diff-lbl">◈ MEDIUM</span>
-      </div>
-
-      <div class="timer-track">
-        <div class="timer-fill" id="timerBar"></div>
-      </div>
-
-      <div class="question-panel">
-        <div class="question-text js-question-text"></div>
-      </div>
-
-      <div class="opts js-opts">
-        <!-- <div class="opt sel js-opt-1" onclick="selOpt(this)"><div class="opt-key">A</div>JSON.parse()</div>
-        <div class="opt js-opt-2"onclick="selOpt(this)"><div class="opt-key">B</div>JSON.stringify()</div>
-        <div class="opt js-opt-3" onclick="selOpt(this)"><div class="opt-key">C</div>JSON.convert()</div>
-        <div class="opt js-opt-4" onclick="selOpt(this)"><div class="opt-key">D</div>JSON.decode()</div> -->
-      </div>
-
-      <div class="quiz-bottom">
-        <div class="combo-display js-combo-display" style="display: none;">🔥 COMBO x0 · +0 BONUS XP</div>
-        <button class="next-btn" onclick="go('results',2)">NEXT ROUND ▶</button>
-      </div>
-    </div>
-
-  </div><!-- /quiz -->
-
-  <!-- ═══════ RESULTS / DEBRIEF ═══════ -->
-  <div class="page" id="results">
-    <div class="debrief">
-
-      <div class="debrief-header">MISSION DEBRIEF</div>
-
-      <div class="score-hero">
-        <div class="score-dial js-score-dial"><div class="score-dial-val js-score-dial-val">72%</div></div>
-        <div class="hero-info">
-          <div class="hero-grade">MISSION COMPLETE</div>
-        </div>
-        <div class="xp-gained">
-          <div class="xp-big js-xp">+640</div>
-          <div class="xp-lbl">XP EARNED</div>
-        </div>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-num js-correct-num" style="color:var(--green);text-shadow:0 0 12px var(--green)">8</div>
-          <div class="stat-lbl">NEUTRALIZED</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num js-wrong-num" style="color:var(--red);text-shadow:0 0 12px var(--red)">2</div>
-          <div class="stat-lbl">FAILED</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num js-avg-time" style="color:var(--cyan);text-shadow:0 0 12px var(--cyan)">34s</div>
-          <div class="stat-lbl">AVG RESPONSE</div>
-        </div>
-      </div>
-
-      <!-- ── NEURAL PERFORMANCE MATRIX (Radar + Stats) ── -->
-      <div class="section-tag" style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:0.6rem">
-        NEURAL PERFORMANCE MATRIX
-        <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);display:block"></span>
-      </div>
-
-      <div class="radar-section">
-
-        <!-- Radar Chart -->
-        <div class="radar-card">
-          <div class="radar-canvas-wrap">
-            <canvas id="radarChart"></canvas>
+        <div class="api-steps">
+          <div class="api-step">
+            <div class="step-num">1</div>
+            <span>Go to <a class="step-link" href="https://console.groq.com" target="_blank">console.groq.com</a> and
+              sign up for free</span>
+          </div>
+          <div class="api-step">
+            <div class="step-num">2</div>
+            <span>Navigate to API Keys → Create new key</span>
+          </div>
+          <div class="api-step">
+            <div class="step-num">3</div>
+            <span>Paste it below — no credit card required</span>
           </div>
         </div>
 
-        <!-- Stat bars beside radar -->
-        <div class="stat-list">
-          <div class="stat-item">
-            <div class="stat-item-top">
-              <div class="stat-name">ACCURACY</div>
-              <div class="stat-val js-stat-accuracy" style="color:var(--cyan)">0%</div>
-            </div>
-            <div class="stat-bar-bg"><div class="stat-bar js-bar-accuracy" style="width:0%;background:linear-gradient(90deg,var(--cyan),#0099cc);box-shadow:0 0 6px var(--cyan)"></div></div>
+        <div class="api-input-wrap">
+          <div class="api-input-label">YOUR GROQ API KEY</div>
+          <div class="api-input-row">
+            <input class="api-input-field" id="apiKeyInput" type="password"
+              placeholder="gsk_••••••••••••••••••••••••••••••••" />
+            <button class="api-toggle" id="toggleBtn">SHOW</button>
           </div>
-          <div class="stat-item">
-            <div class="stat-item-top">
-              <div class="stat-name">SPEED</div>
-              <div class="stat-val js-stat-speed" style="color:var(--green)">0%</div>
-            </div>
-            <div class="stat-bar-bg"><div class="stat-bar js-bar-speed" style="width:0%;background:linear-gradient(90deg,var(--green),#00cc66);box-shadow:0 0 6px var(--green)"></div></div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-item-top">
-              <div class="stat-name">STREAK</div>
-              <div class="stat-val js-stat-streak" style="color:var(--orange)">0%</div>
-            </div>
-            <div class="stat-bar-bg"><div class="stat-bar js-bar-streak" style="width:0%;background:linear-gradient(90deg,var(--orange),#cc5500);box-shadow:0 0 6px var(--orange)"></div></div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-item-top">
-              <div class="stat-name">CONSISTENCY</div>
-              <div class="stat-val js-stat-consistency" style="color:var(--yellow)">0%</div>
-            </div>
-            <div class="stat-bar-bg"><div class="stat-bar js-bar-consistency" style="width:0%;background:linear-gradient(90deg,var(--yellow),#cc9900);box-shadow:0 0 6px var(--yellow)"></div></div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-item-top">
-              <div class="stat-name">DIFFICULTY</div>
-              <div class="stat-val js-stat-difficulty" style="color:var(--red)">0%</div>
-            </div>
-            <div class="stat-bar-bg"><div class="stat-bar js-bar-difficulty" style="width:0%;background:linear-gradient(90deg,var(--red),#cc0033);box-shadow:0 0 6px var(--red)"></div></div>
-          </div>
+          <div class="api-validation" id="validationMsg"></div>
         </div>
 
       </div>
 
-      <!-- ── BATTLE LOG ── -->
-      <div class="section-tag" style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:0.6rem;margin-top:0.5rem">
-        BATTLE LOG — ROUND REPLAY
-        <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);display:block"></span>
+      <!-- SUCCESS STATE -->
+      <div class="api-success" id="apiSuccess">
+        <div class="success-icon">✓</div>
+        <div class="success-title">KEY ACCEPTED</div>
+        <div class="success-sub">AI CORE ONLINE — LAUNCHING MISSION SELECT...</div>
       </div>
 
-      <div class="battle-log-card">
-        <div class="timeline-track js-timeline"></div>
-        <div class="tl-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>HIT</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>FAILED</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>SKIPPED</div>
-          <div class="legend-item" style="margin-left:auto;font-size:0.52rem">BAR HEIGHT = RESPONSE SPEED</div>
-        </div>
+      <!-- FAILIURE STATE -->
+      <div class="api-failed" id="api-failed" style="display:none;">
+        ✗ &nbsp; INVALID KEY — CHECK AND TRY AGAIN
       </div>
 
-      <div class="actions">
-        <button class="act-ghost" onclick="go('home',0)">◄ NEW MISSION</button>
-        <button class="act-primary" onclick="go('quiz',1)">RECON WEAK ZONES ►</button>
+      <!-- FOOTER -->
+      <div class="api-footer" id="apiFooter">
+        <button class="api-skip">USE BACKUP QUESTIONS</button>
+        <button class="api-confirm" id="confirmBtn" disabled>
+          ◈ &nbsp; ACTIVATE AI CORE
+        </button>
+      </div>
+
+      <div class="api-privacy">
+        KEY IS SAVED TO LOCALSTORAGE — NEVER TRANSMITTED TO ANY SERVER
       </div>
 
     </div>
-  </div><!-- /results -->
+  </div>
+  <!-- /Api Overlay -->
 
-</div>
-<script type ="module" src="script.js"></script>
+  <!-- HUD BAR -->
+  <div class="hud-bar">
+    <div class="hud-logo">NEURAL<span>QUIZ</span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="go('home',0)">MISSION</button>
+      <button class="nav-tab" onclick="go('quiz',1)">BATTLE</button>
+      <button class="nav-tab" onclick="go('results',2)">DEBRIEF</button>
+    </div>
+    <div class="hud-time" id="clock">00:00:00</div>
+  </div>
+
+  <div class="pages">
+
+    <!-- ═══════ HOME / MISSION SELECT ═══════ -->
+    <div class="page active" id="home">
+
+      <div class="home-left">
+        <div class="mission-tag">MISSION SELECT</div>
+        <div class="home-title">
+          <div class="line1">TRAIN YOUR</div>
+          <div class="line2">NEURAL</div>
+          <div class="line3">NETWORK.</div>
+        </div>
+        <p class="home-desc">
+          AI generates adaptive quiz missions. Your performance data shapes the next challenge. Weakness detected —
+          difficulty increases.
+        </p>
+        <div class="player-hud">
+          <div class="phud-box">
+            <div class="phud-label">LEVEL</div>
+            <div class="phud-val js-level ">07</div>
+          </div>
+          <div class="phud-box">
+            <div class="phud-label">TOTAL XP</div>
+            <div class="phud-val js-total-xp">2840</div>
+          </div>
+          <div class="phud-box">
+            <div class="phud-label">STREAK</div>
+            <div class="phud-val js-daily-streak" style="color:var(--orange);text-shadow:0 0 12px var(--orange)">🔥 5
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-right">
+        <div class="section-tag">TARGET SUBJECT</div>
+
+        <div class="topic-field">
+          <div class="field-icon">&gt;_</div>
+          <input class="topic-input js-topic-input" id="topicInput" type="text"
+            placeholder="ENTER SUBJECT — e.g. JavaScript, Photosynthesis…" />
+          <button class="ai-btn" onclick="toggleChips()">AI SCAN</button>
+        </div>
+
+
+
+
+        <div class="chips js-topics" id="chips" style="display:none">
+          <!-- <div class="chip" onclick="pick(this)">REACT HOOKS</div>
+          <div class="chip" onclick="pick(this)">DATA STRUCTURES</div>
+          <div class="chip" onclick="pick(this)">INDIAN HISTORY</div>
+          <div class="chip" onclick="pick(this)">PHOTOSYNTHESIS</div>
+          <div class="chip" onclick="pick(this)">PYTHON BASICS</div>
+          <div class="chip" onclick="pick(this)">CALCULUS</div>
+          <div class="chip" onclick="pick(this)">OS CONCEPTS</div>
+          <div class="chip" onclick="pick(this)">WORLD WAR II</div> -->
+        </div>
+
+        <div class="section-tag">MISSION PARAMETERS</div>
+
+        <div class="cfg-grid">
+          <div class="cfg-box">
+            <div class="cfg-label">ROUNDS</div>
+            <select class="js-rounds-input">
+              <option>10</option>
+              <option>15</option>
+              <option>20</option>
+            </select>
+          </div>
+          <div class="cfg-box">
+            <div class="cfg-label">THREAT LEVEL</div>
+            <select class="js-diff-input">
+              <option>AUTO-ADAPT</option>
+              <option>EASY</option>
+              <option>MEDIUM</option>
+              <option>HARD</option>
+            </select>
+          </div>
+          <div class="cfg-box">
+            <div class="cfg-label">TIME / ROUND</div>
+            <select class="js-time-input">
+              <option>30 SEC</option>
+              <option>45 SEC</option>
+              <option>60 SEC</option>
+              <option>UNLIMITED</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="launch-btn js-launch-btn">
+          ◈ &nbsp; LAUNCH MISSION &nbsp; ◈
+        </button>
+      </div>
+
+    </div><!-- /home -->
+
+    <!-- ═══════ QUIZ / BATTLE ═══════ -->
+    <div class="page" id="quiz" style="display:none">
+
+      <div class="quiz-sidebar">
+        <div class="sb-block" style="background:#00e5ff08;border-color:#00e5ff22">
+          <div class="sb-lbl">SUBJECT</div>
+          <div class="js-quiz-topic"
+            style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--muted);letter-spacing:1px;line-height:1.4">
+            — STANDBY —</div>
+        </div>
+
+        <div class="sb-block">
+          <div class="sb-lbl ">TIME REMAINING</div>
+          <div class="sb-num js-time-text" style="color:var(--muted);text-shadow:0 0 15px var(--muted)" id="timer">—:——
+          </div>
+          <!-- <div class="xp-bar-bg"><div class="xp-bar" style="background:linear-gradient(90deg,var(--cyan),var(--green));width:70%"></div></div> -->
+        </div>
+
+        <div class="sb-block">
+          <div class="sb-lbl">SCORE</div>
+          <div class="sb-num js-left-score" style="color:var(--muted);text-shadow:0 0 15px var(--muted)">+0</div>
+        </div>
+
+        <div class="sb-block">
+          <div class="sb-lbl">ACCURACY</div>
+          <div class="sb-num js-left-accuracy"
+            style="color:var(--muted);text-shadow:0 0 10px var(--muted);font-size:1.3rem">—%</div>
+          <div class="xp-bar-bg" style="margin-top:0.4rem">
+            <div class="xp-bar js-accuracy-bar"
+              style="background:linear-gradient(90deg,var(--yellow),var(--orange));width:1%;display:none"></div>
+          </div>
+        </div>
+
+        <div class="sb-block">
+          <div class="sb-lbl js-prog-lbl">PROGRESS · 0/0</div>
+          <div class="prog-grid js-prog-grid " data-generated="0">
+            <!-- <div class="psq" id="psq-1"></div>
+            <div class="psq" id="psq-2"></div>
+            <div class="psq" id="psq-3"></div>
+            <div class="psq" id="psq-4"></div>
+            <div class="psq" id="psq-5"></div>
+            <div class="psq" id="psq-6"></div>
+            <div class="psq" id="psq-7"></div>
+            <div class="psq" id="psq-8"></div>
+            <div class="psq" id="psq-9"></div>
+            <div class="psq" id="psq-10"></div> -->
+          </div>
+        </div>
+
+        <div class="streak-badge" style="display:none;">
+          <div class="streak-fire">🔥</div>
+          <div>
+            <div class="streak-txt js-streak-txt">x0 COMBO</div>
+            <div class="streak-sub js-streak-msg">KEEP GOING</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-main">
+        <div class="q-topbar">
+          <span class="q-id js-round-lbl">ROUND 07 / 10</span>
+          <span class="diff-hud js-diff-lbl">◈ MEDIUM</span>
+        </div>
+
+        <div class="timer-track">
+          <div class="timer-fill js-time-bar" id="timerBar"></div>
+        </div>
+
+        <div class="question-panel">
+          <div class="question-text js-question-text"></div>
+        </div>
+
+        <div class="opts js-opts">
+          <!-- <div class="opt sel js-opt-1" onclick="selOpt(this)"><div class="opt-key">A</div>JSON.parse()</div>
+                <div class="opt js-opt-2"onclick="selOpt(this)"><div class="opt-key">B</div>JSON.stringify()</div>
+                <div class="opt js-opt-3" onclick="selOpt(this)"><div class="opt-key">C</div>JSON.convert()</div>
+                <div class="opt js-opt-4" onclick="selOpt(this)"><div class="opt-key">D</div>JSON.decode()</div> -->
+        </div>
+
+        <div class="quiz-bottom">
+          <div class="combo-display js-combo-display" style="display: none;">🔥 COMBO x0 · +0 BONUS XP</div>
+          <button class="next-btn" onclick="go('results',2)">NEXT ROUND ▶</button>
+        </div>
+        <div class="quiz-idle" style="display: flex;">
+
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+
+          <div class="idle-icon">◈</div>
+
+          <div class="idle-box">
+            <div class="idle-title">NO ACTIVE MISSION</div>
+            <div class="idle-sub">
+              SYSTEM STANDING BY<br>
+              CONFIGURE AND LAUNCH A MISSION<br>
+              FROM THE MISSION SELECT SCREEN
+            </div>
+          </div>
+
+          <div class="idle-cursor">AWAITING INPUT </div>
+
+          <button class="idle-btn" onclick="go('home',0)">◄ &nbsp; GO TO MISSION SELECT</button>
+
+        </div>
+      </div>
+    </div><!-- /quiz -->
+
+    <!-- ═══════ RESULTS / DEBRIEF ═══════ -->
+    <div class="page" id="results">
+      <div class="debrief">
+
+        <div class="debrief-header">MISSION DEBRIEF</div>
+
+        <div class="score-hero">
+          <div class="score-dial js-score-dial">
+            <div class="score-dial-val js-score-dial-val">72%</div>
+          </div>
+          <div class="hero-info">
+            <div class="hero-grade">MISSION COMPLETE</div>
+            <div class="hero-sub js-hero-sub"></div>
+          </div>
+          <div class="xp-gained">
+            <div class="xp-big js-xp">+640</div>
+            <div class="xp-lbl">XP EARNED</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-num js-correct-num" style="color:var(--green);text-shadow:0 0 12px var(--green)">8</div>
+            <div class="stat-lbl">NEUTRALIZED</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num js-wrong-num" style="color:var(--red);text-shadow:0 0 12px var(--red)">2</div>
+            <div class="stat-lbl">FAILED</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num js-avg-time" style="color:var(--cyan);text-shadow:0 0 12px var(--cyan)">34s</div>
+            <div class="stat-lbl">AVG RESPONSE</div>
+          </div>
+        </div>
+
+        <!-- ── NEURAL PERFORMANCE MATRIX (Radar + Stats) ── -->
+        <div class="section-tag"
+          style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:0.6rem">
+          NEURAL PERFORMANCE MATRIX
+          <span
+            style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);display:block"></span>
+        </div>
+
+        <div class="radar-section">
+
+          <!-- Radar Chart -->
+          <div class="radar-card">
+            <div class="radar-canvas-wrap">
+              <canvas id="radarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Stat bars beside radar -->
+          <div class="stat-list">
+            <div class="stat-item">
+              <div class="stat-item-top">
+                <div class="stat-name">ACCURACY</div>
+                <div class="stat-val js-stat-accuracy" style="color:var(--cyan)">0%</div>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar js-bar-accuracy"
+                  style="width:0%;background:linear-gradient(90deg,var(--cyan),#0099cc);box-shadow:0 0 6px var(--cyan)">
+                </div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-item-top">
+                <div class="stat-name">SPEED</div>
+                <div class="stat-val js-stat-speed" style="color:var(--green)">0%</div>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar js-bar-speed"
+                  style="width:0%;background:linear-gradient(90deg,var(--green),#00cc66);box-shadow:0 0 6px var(--green)">
+                </div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-item-top">
+                <div class="stat-name">STREAK</div>
+                <div class="stat-val js-stat-streak" style="color:var(--orange)">0%</div>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar js-bar-streak"
+                  style="width:0%;background:linear-gradient(90deg,var(--orange),#cc5500);box-shadow:0 0 6px var(--orange)">
+                </div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-item-top">
+                <div class="stat-name">CONSISTENCY</div>
+                <div class="stat-val js-stat-consistency" style="color:var(--yellow)">0%</div>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar js-bar-consistency"
+                  style="width:0%;background:linear-gradient(90deg,var(--yellow),#cc9900);box-shadow:0 0 6px var(--yellow)">
+                </div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-item-top">
+                <div class="stat-name">DIFFICULTY</div>
+                <div class="stat-val js-stat-difficulty" style="color:var(--red)">0%</div>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar js-bar-difficulty"
+                  style="width:0%;background:linear-gradient(90deg,var(--red),#cc0033);box-shadow:0 0 6px var(--red)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── BATTLE LOG ── -->
+        <div class="section-tag"
+          style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:3px;display:flex;align-items:center;gap:0.6rem;margin-top:0.5rem">
+          BATTLE LOG — ROUND REPLAY
+          <span
+            style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);display:block"></span>
+        </div>
+
+        <div class="battle-log-card">
+          <div class="timeline-track js-timeline"></div>
+          <div class="tl-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--green)"></div>HIT
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--red)"></div>FAILED
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--yellow)"></div>SKIPPED
+            </div>
+            <div class="legend-item" style="margin-left:auto;font-size:0.52rem">BAR HEIGHT = RESPONSE SPEED</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="act-ghost" onclick="go('home',0)">◄ NEW MISSION</button>
+          <button class="act-primary" onclick="go('quiz',1)">RECON WEAK ZONES ►</button>
+        </div>
+
+      </div>
+    </div><!-- /results -->
+
+  </div>
+  <script src="scripts/utils/chart.umd.min.js"></script> <!-- radar chart library -->
+  <script type="module" src="script.js"></script>
+
 </body>
+
 </html>

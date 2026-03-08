@@ -13,6 +13,54 @@
     --dim: #1a2030;
 }
 
+/* --- ORBITRON --- */
+@font-face {
+  font-family: 'Orbitron';
+  src: url('fonts/Orbitron.ttf') format('truetype');
+  font-weight: 400 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- RAJDHANI --- */
+@font-face {
+  font-family: 'Rajdhani';
+  src: url('fonts/Rajdhani-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rajdhani';
+  src: url('fonts/Rajdhani-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rajdhani';
+  src: url('fonts/Rajdhani-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rajdhani';
+  src: url('fonts/Rajdhani-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- SHARE TECH MONO --- */
+@font-face {
+  font-family: 'Share Tech Mono';
+  src: url('fonts/ShareTechMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 *,
 *::before,
 *::after {
@@ -623,6 +671,7 @@ body::after {
 .quiz-main {
     flex: 1;
     padding: 1.5rem 2rem;
+    position:relative;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -703,8 +752,9 @@ body::after {
     bottom: 0;
     background: linear-gradient(90deg, var(--cyan), var(--green));
     box-shadow: 0 0 10px var(--cyan);
+    height:3px;
     width: 70%;
-    transition: width 1s linear;
+    transition: width 0.5s linear;
 }
 
 .question-panel {
@@ -1364,4 +1414,187 @@ body::after {
   .legend-dot {
     width: 8px; height: 8px;
     border-radius: 1px;
+  }
+
+  
+  /* QUIZ PAGE */
+  .quiz-page {
+    height: 100vh;
+    display: flex;
+  }
+
+  /* QUIZ MAIN */
+/* 1. Ensure the main container is ready to hold the overlay */
+.quiz-main {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
+    position: relative; /* <--- CRITICAL: Keeps the overlay trapped inside! */
+}
+
+/* 2. The Idle Curtain (The Bulldozer) */
+.quiz-idle {
+    position: absolute !important; 
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 100 !important; /* Forces it to sit on top of everything */
+    background: var(--bg) !important; /* Solid background hides the quiz behind it */
+    
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.4rem;
+}
+
+  /* grid bg */
+  .quiz-idle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.4;
+  }
+
+  /* center glow */
+  .quiz-idle::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00e5ff06, transparent 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .idle-icon {
+    font-family: 'Orbitron', monospace;
+    font-size: 3.5rem;
+    color: var(--muted);
+    animation: idlePulse 2.5s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 30px #3a4a5a88;
+  }
+
+  @keyframes idlePulse {
+    0%, 100% { opacity: 0.25; transform: scale(1);    }
+    50%       { opacity: 0.7;  transform: scale(1.08); }
+  }
+
+  .idle-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 5px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .idle-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    color: #6c7a86;
+    letter-spacing: 2px;
+    text-align: center;
+    max-width: 280px;
+    line-height: 2;
+    opacity: 0.7;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* dashed border box around text */
+  .idle-box {
+    border: 1px dashed var(--muted);
+    padding: 2rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    clip-path: polygon(16px 0%, 100% 0%, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0% 100%, 0% 16px);
+    position: relative;
+    z-index: 1;
+    opacity: 0.55;
+    background: #00e5ff03;
+  }
+
+  .idle-btn {
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    padding: 0.75rem 2rem;
+    cursor: crosshair;
+    transition: all 0.25s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    text-shadow: 0 0 10px var(--cyan);
+    position: relative;
+    z-index: 1;
+    opacity: 0.8;
+    overflow: hidden;
+  }
+
+  .idle-btn::before {
+    content: '';
+    position: absolute;
+    left: -100%; top: 0; bottom: 0;
+    width: 60%;
+    background: linear-gradient(90deg, transparent, #00e5ff15, transparent);
+    transition: left 0.5s;
+  }
+
+  .idle-btn:hover::before { left: 150%; }
+  .idle-btn:hover {
+    opacity: 1;
+    box-shadow: 0 0 25px #00e5ff22;
+    background: #00e5ff08;
+  }
+
+  /* corner decorations */
+  .corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: var(--muted);
+    border-style: solid;
+    opacity: 0.3;
+    z-index: 1;
+  }
+
+  .corner-tl { top: 2rem; left: 2rem; border-width: 1px 0 0 1px; }
+  .corner-tr { top: 2rem; right: 2rem; border-width: 1px 1px 0 0; }
+  .corner-bl { bottom: 2rem; left: 2rem; border-width: 0 0 1px 1px; }
+  .corner-br { bottom: 2rem; right: 2rem; border-width: 0 1px 1px 0; }
+
+  /* blinking cursor line */
+  .idle-cursor {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+    opacity: 0.5;
+  }
+
+  .idle-cursor::after {
+    content: '█';
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
   }

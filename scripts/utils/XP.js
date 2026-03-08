@@ -1,5 +1,5 @@
 import { timeleft } from './timer.js';
-import { loadFromStorage } from '../results.js';
+import { loadFromStorage } from '../data/storage.js';
 
 
 let streakXP = 10;

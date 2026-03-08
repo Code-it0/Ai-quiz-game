@@ -7,7 +7,7 @@ import './scripts/results.js';
 console.log('connected');
 function go(id, idx) {
   // hide all pages
-  ['home','quiz','results'].forEach(p => {
+  ['home', 'quiz', 'results'].forEach(p => {
     const el = document.getElementById(p);
     el.classList.remove('active');
     el.style.display = 'none';
@@ -44,9 +44,25 @@ setInterval(() => {
   const now = new Date();
   document.getElementById('clock').textContent =
     [now.getHours(), now.getMinutes(), now.getSeconds()]
-    .map(n => n.toString().padStart(2,'0')) // ensures 2 digits e.g. 9 → "09"
-    .join(':');
+      .map(n => n.toString().padStart(2, '0')) // ensures 2 digits e.g. 9 → "09"
+      .join(':');
 }, 1000);
+
+
+//shortcut keys for switching between pages with left/right arrow keys
+const tabs = ['home', 'quiz', 'results'];
+let i = 0;
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') {
+    if (tabs[i + 1]) i++;
+    else i = 0;
+  }
+  else if (e.key === 'ArrowLeft') {
+    if (tabs[i - 1]) i--;
+    else i = tabs.length - 1;
+  }
+  go(tabs[i], i);
+});
 
 
 // Make functions globally available for inline onclick handlers

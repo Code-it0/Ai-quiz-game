@@ -1,18 +1,19 @@
-import { loadQuizInfo,LoadQuestionLog } from './data/questions.js';
+import { loadFromStorageById,loadQuizInfoById,LoadQuestionLogById } from './data/storage.js';
 export function generateResults() {
-    const scoreData = loadFromStorage()[0]; // load current score data (index 0 since it's the most recent)
-    const quizInfo = loadQuizInfo()[0]; //load recent quiz info  
+    const scoreData = loadFromStorageById('recent'); // load current score data (index 0 since it's the most recent)
+    console.log(scoreData);
+    const quizInfo = loadQuizInfoById('recent'); //load recent quiz info  
     const { correct, wrong, totalAnswered, totalQuestions, accuracy, averageTime, xp } = scoreData;
     (document.querySelector('.js-correct-num')).textContent = correct; //changing score on page
     (document.querySelector('.js-wrong-num')).textContent = wrong; // changing wrong score on page
     (document.querySelector('.js-avg-time')).textContent = averageTime + " SEC"; // changing average time on page
 
     //finding previous accuracy from local storage
-    const prevData = loadFromStorage(2); // get previous score data (quizId 1 since current score is at quizId 0)
+    const prevData = loadFromStorageById('secondLast'); // get previous score data (quizId 1 since current score is at quizId 0)
     const prevAccuracy = prevData ? prevData.accuracy : 'last run';
 
     let quizTopic = quizInfo.quizTopic;
-    (document.querySelector('.hero-info')).innerHTML += `<div class="hero-sub">${quizTopic} · ${correct}/${totalQuestions} correct · +${accuracy}% vs ${prevAccuracy}% <br>${correct} threats neutralized. ${wrong} weaknesses flagged for recon.</div>`;
+    (document.querySelector('.js-hero-sub')).innerHTML = `${quizTopic} · ${correct}/${totalQuestions} correct · +${accuracy}% vs ${prevAccuracy}% <br>${correct} threats neutralized. ${wrong} weaknesses flagged for recon.`;
 
     (document.querySelector('.js-xp')).textContent = `+${xp}`; // display  XP on page
 
@@ -25,45 +26,20 @@ export function generateResults() {
 
     //Generating radar results 
     generateRadar(scoreData,prevData);
-    console.log(scoreData.quizId);
     
     //generating battlelog results
-    let currentQuizInfo = loadQuizInfo(scoreData.quizId);
+    let currentQuizInfo = loadQuizInfoById(scoreData.quizId);
     let timePerQue = currentQuizInfo ? currentQuizInfo.timePerQue : 5; // fallback to 5
     // Pass the correctly fetched time limit instead of scoreData.timePerQue
-    generateBattleLog(LoadQuestionLog(scoreData.quizId), timePerQue);
+    generateBattleLog(LoadQuestionLogById(scoreData.quizId), timePerQue);
 
 }
 
-export function saveToStorage(scoreData) {
-    let Sdata = loadFromStorage();
-    scoreData.quizId = Sdata.length + 1; // assign quizId based on current length of stored data (1 for first quiz, 2 for second quiz etc.)
-    Sdata.splice(0, 0, scoreData); //adding score data to the 0th indext , without deletig any previous data 
-    localStorage.setItem('quizScore', JSON.stringify(Sdata));
-    generateResults();
-}
-export function loadFromStorage(quizId) {
-    let data = JSON.parse(localStorage.getItem('quizScore')) ||
-        [
-            {
-                quizId: 1,
-                correct: 8,
-                wrong: 2,
-                totalAnswered: 10,
-                totalQuestions: 10,
-                accuracy: 80,
-                averageTime: 2,
-                xp: 1000,
-                maxStreak: 5
-            }
-        ];
-    if (quizId) data = data[quizId - 1]; // if quizId provided, return only that score data instead of all data
-    return data;
-}
+//deleted from here
 
 function generateRadarData(scoreData) {
     // calculate 5 axes (all 0-100)
-    let Data = loadQuizInfo(scoreData.quizId);
+    let Data = loadQuizInfoById(scoreData.quizId);
     const timePerQue = Data.timePerQue; // match your timer.js value
     let difficultyLevel = Data['difficulty']; // or difficultyData.difficulty
     // 1. Create a quick helper function to keep the object readable
@@ -77,7 +53,7 @@ function generateRadarData(scoreData) {
         speed: snapToTen((1 - scoreData.averageTime / timePerQue) * 100),
         streakScore: snapToTen(Math.pow(scoreData.maxStreak / scoreData.totalQuestions, 0.7) * 100),
         // Using 0.7 as the exponent (1 is linear, 0.5 is square root)
-        consistency: scoreData.correct > 0 ? snapToTen((scoreData.maxStreak / scoreData.correct) * 100) : 0,
+        consistency: scoreData.totalQuestions > 0 ? snapToTen((scoreData.maxStreak / scoreData.totalQuestions) * 100) : 0,
         difficulty: difficultyLevel,
         diffScore: difficultyLevel === 'HARD' ? 100 : difficultyLevel === 'MEDIUM' ? 60 : 30
     };
@@ -170,7 +146,6 @@ export function generateRadar(scoreData, prevData) {
 }
 
 export function generateBattleLog(questionLog, timePerQue) {
-    console.log(questionLog);
     const timeline = document.querySelector('.js-timeline');
     timeline.innerHTML = '';
     const MAX_H = 52;
@@ -184,7 +159,7 @@ export function generateBattleLog(questionLog, timePerQue) {
             barH = 8; cls = 'skipped';
             tip = `Q${i + 1} · SKIPPED`;
         } else if (entry.correct) {
-            const speed = (timePerQue - entry.timeTaken) / timePerQue;
+            const speed = Math.max(1, (timePerQue - entry.timeTaken) / timePerQue);
             barH = Math.max(14, Math.round(speed * MAX_H));
             cls = 'correct';
             tip = `Q${i + 1} · HIT · ${entry.timeTaken}s`;
