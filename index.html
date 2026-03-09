@@ -190,7 +190,7 @@
           <div class="field-icon">&gt;_</div>
           <input class="topic-input js-topic-input" id="topicInput" type="text"
             placeholder="ENTER SUBJECT — e.g. JavaScript, Photosynthesis…" />
-          <button class="ai-btn" onclick="toggleChips()">AI SCAN</button>
+          <button class="ai-btn normal-btn" >AI SCAN ▶</button>
         </div>
 
 
@@ -205,6 +205,14 @@
           <div class="chip" onclick="pick(this)">CALCULUS</div>
           <div class="chip" onclick="pick(this)">OS CONCEPTS</div>
           <div class="chip" onclick="pick(this)">WORLD WAR II</div> -->
+        </div>
+        
+        <div class="chips js-weak-chips" id="weakChips" style="display:none;">
+          <div class="weak-chips-header">
+            <span class="weak-chips-icon">⚠</span>
+            <span class="weak-chips-label">WEAK ZONES DETECTED — SELECT TO RECON</span>
+          </div>
+          <!-- chips get injected here by JS -->
         </div>
 
         <div class="section-tag">MISSION PARAMETERS</div>
@@ -326,7 +334,7 @@
 
         <div class="quiz-bottom">
           <div class="combo-display js-combo-display" style="display: none;">🔥 COMBO x0 · +0 BONUS XP</div>
-          <button class="next-btn js-nextQuestion-btn" >NEXT ROUND ▶</button>
+          <button class="next-btn js-nextQuestion-btn">NEXT ROUND ▶</button>
         </div>
         <div class="quiz-idle" style="display: flex;">
 
@@ -493,7 +501,7 @@
 
         <div class="actions">
           <button class="act-ghost" onclick="go('home',0)">◄ NEW MISSION</button>
-          <button class="act-primary" onclick="go('quiz',1)">RECON WEAK ZONES ►</button>
+          <button class="act-primary js-recon-topics">RECON WEAK ZONES ►</button>
         </div>
 
       </div>

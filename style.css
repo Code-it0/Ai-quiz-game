@@ -15,50 +15,53 @@
 
 /* --- ORBITRON --- */
 @font-face {
-  font-family: 'Orbitron';
-  src: url('fonts/Orbitron.ttf') format('truetype');
-  font-weight: 400 700 900;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Orbitron';
+    src: url('fonts/Orbitron.ttf') format('truetype');
+    font-weight: 400 700 900;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* --- RAJDHANI --- */
 @font-face {
-  font-family: 'Rajdhani';
-  src: url('fonts/Rajdhani-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Rajdhani';
+    src: url('fonts/Rajdhani-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
 }
+
 @font-face {
-  font-family: 'Rajdhani';
-  src: url('fonts/Rajdhani-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Rajdhani';
+    src: url('fonts/Rajdhani-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
+
 @font-face {
-  font-family: 'Rajdhani';
-  src: url('fonts/Rajdhani-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Rajdhani';
+    src: url('fonts/Rajdhani-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
 }
+
 @font-face {
-  font-family: 'Rajdhani';
-  src: url('fonts/Rajdhani-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Rajdhani';
+    src: url('fonts/Rajdhani-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* --- SHARE TECH MONO --- */
 @font-face {
-  font-family: 'Share Tech Mono';
-  src: url('fonts/ShareTechMono-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Share Tech Mono';
+    src: url('fonts/ShareTechMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
 
 *,
@@ -357,10 +360,12 @@ body::after {
     clip-path: polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px);
     transition: border-color 0.2s;
     position: relative;
+    --focus-border-color: #00e5ff55;/* Set the default focus color variable */ 
+    --focus-box-shadow: #00e5ff55;/* Set the default focus color variable */ 
 }
 
 .topic-field:focus-within {
-    border-color: #00e5ff55;
+    border-color: var(--focus-border-color);
     background: #00e5ff05;
 }
 
@@ -389,22 +394,35 @@ body::after {
 }
 
 .ai-btn {
-    background: transparent;
-    border: 1px solid var(--orange);
-    color: var(--orange);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 2px;
-    padding: 0.35rem 0.7rem;
-    cursor: crosshair;
-    transition: all 0.2s;
-    clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+  background: transparent;
+  border: 1px solid var(--orange);
+  color: var(--orange);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  padding: 0.35rem 0.7rem;
+  cursor: crosshair;
+  transition: all 0.25s;
+  clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
 }
 
 .ai-btn:hover {
-    background: #ff6b0015;
-    text-shadow: 0 0 10px var(--orange);
-    box-shadow: 0 0 15px #ff6b0022;
+  background: #ff6b0015;
+  box-shadow: 0 0 15px #ff6b0022;
+  text-shadow: 0 0 10px var(--orange);
+}
+
+/* recon mode — button turns red */
+.ai-btn.recon {
+  border-color: #ff225566;
+  color: var(--red);
+  background: #ff225508;
+}
+
+.ai-btn.recon:hover {
+  background: #ff225518;
+  box-shadow: 0 0 15px #ff225522;
+  text-shadow: 0 0 10px var(--red);
 }
 
 /* chips */
@@ -433,6 +451,66 @@ body::after {
     background: #00e5ff0a;
     text-shadow: 0 0 8px var(--cyan);
 }
+
+.chip.weak {
+    border-color: #ff225566;
+    background: #ff225510;
+    color: var(--red);
+    text-shadow: 0 0 8px #ff225566;
+    position: relative;
+    overflow: hidden;
+}
+
+/* animated left border accent */
+.chip.weak::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--red);
+    box-shadow: 0 0 8px var(--red);
+}
+
+/* subtle pulse so they stand out */
+.chip.weak:hover {
+    background: #ff225520;
+    border-color: var(--red);
+    box-shadow: 0 0 12px #ff225533;
+}
+
+.weak-chips-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: var(--red);
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #ff225533;
+    margin-bottom: 0.2rem;
+}
+
+.weak-chips-icon {
+    font-size: 0.7rem;
+    animation: warnPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes warnPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
 
 /* 3-col config */
 .cfg-grid {
@@ -671,7 +749,7 @@ body::after {
 .quiz-main {
     flex: 1;
     padding: 1.5rem 2rem;
-    position:relative;
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -700,16 +778,19 @@ body::after {
     border: 1px solid;
     /* The clipped corner effect */
     clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
-    
+
     /* Smooth transition for color changes */
     transition: all 0.3s ease;
 }
 
 /* --- EASY (Green / Cyber-Green) --- */
 .diff-hud.easy {
-    color: var(--green, #00ff41);   /* Fallback: Neon Green */
-    border-color: #00ff4144;        /* Green @ ~25% opacity */
-    background: #00ff4110;          /* Green @ ~6% opacity */
+    color: var(--green, #00ff41);
+    /* Fallback: Neon Green */
+    border-color: #00ff4144;
+    /* Green @ ~25% opacity */
+    background: #00ff4110;
+    /* Green @ ~6% opacity */
     text-shadow: 0 0 8px var(--green, #00ff41);
 }
 
@@ -723,19 +804,24 @@ body::after {
 
 /* --- HARD (Red / Crimson) --- */
 .diff-hud.hard {
-    color: var(--red, #ff003c);     /* Fallback: Cyber Red */
-    border-color: #ff003c44;        /* Red @ ~25% opacity */
-    background: #ff003c10;          /* Red @ ~6% opacity */
+    color: var(--red, #ff003c);
+    /* Fallback: Cyber Red */
+    border-color: #ff003c44;
+    /* Red @ ~25% opacity */
+    background: #ff003c10;
+    /* Red @ ~6% opacity */
     text-shadow: 0 0 8px var(--red, #ff003c);
 }
 
 /* --- GOD MODE (Purple / Ultra) --- */
 .diff-hud.god {
-    color: var(--purple, #bc13fe);  /* Fallback: Neon Purple */
+    color: var(--purple, #bc13fe);
+    /* Fallback: Neon Purple */
     border-color: #bc13fe44;
     background: #bc13fe10;
     text-shadow: 0 0 10px var(--purple, #bc13fe);
-    box-shadow: 0 0 15px #bc13fe20; /* Extra glow for God mode */
+    box-shadow: 0 0 15px #bc13fe20;
+    /* Extra glow for God mode */
 }
 
 /* timer bar */
@@ -752,7 +838,7 @@ body::after {
     bottom: 0;
     background: linear-gradient(90deg, var(--cyan), var(--green));
     box-shadow: 0 0 10px var(--cyan);
-    height:3px;
+    height: 3px;
     width: 70%;
     transition: width 0.5s linear;
 }
@@ -1205,16 +1291,16 @@ body::after {
     background: var(--border);
 }
 
-  /* ── RADAR SECTION ── */
-  .radar-section {
+/* ── RADAR SECTION ── */
+.radar-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.2rem;
     align-items: center;
     margin-bottom: 1rem;
-  }
+}
 
-  .radar-card {
+.radar-card {
     background: var(--card);
     border: 1px solid var(--border);
     padding: 1.2rem;
@@ -1224,26 +1310,26 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
 
-  .radar-card::before {
+.radar-card::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
     background-size: 28px 28px;
     opacity: 0.25;
-  }
+}
 
-  .radar-canvas-wrap {
+.radar-canvas-wrap {
     position: relative;
     width: 240px;
     height: 240px;
-  }
+}
 
-  .stat-list {
+.stat-list {
     background: var(--card);
     border: 1px solid var(--border);
     padding: 1.2rem 1.5rem;
@@ -1251,42 +1337,46 @@ body::after {
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
-  }
+}
 
-  .stat-item { display: flex; flex-direction: column; gap: 0.3rem; }
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
 
-  .stat-item-top {
+.stat-item-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+}
 
-  .stat-name {
+.stat-name {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.6rem;
     letter-spacing: 2px;
     color: var(--muted);
-  }
+}
 
-  .stat-val {
+.stat-val {
     font-family: 'Orbitron', monospace;
     font-size: 0.78rem;
     font-weight: 700;
-  }
+}
 
-  .stat-bar-bg {
+.stat-bar-bg {
     height: 3px;
     background: var(--dim);
     clip-path: polygon(2px 0%, 100% 0%, calc(100% - 2px) 100%, 0% 100%);
-  }
+}
 
-  .stat-bar {
+.stat-bar {
     height: 100%;
     transition: width 1.2s ease;
-  }
+}
 
-  /* ── BATTLE LOG ── */
-  .battle-log-card {
+/* ── BATTLE LOG ── */
+.battle-log-card {
     background: var(--card);
     border: 1px solid var(--border);
     padding: 1.2rem 1.5rem;
@@ -1294,21 +1384,21 @@ body::after {
     position: relative;
     overflow: hidden;
     margin-bottom: 1rem;
-  }
+}
 
-  .battle-log-card::before {
+.battle-log-card::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
     background-size: 28px 28px;
     opacity: 0.15;
     pointer-events: none;
-  }
+}
 
-  .timeline-track {
+.timeline-track {
     position: relative;
     height: 80px;
     display: flex;
@@ -1316,18 +1406,19 @@ body::after {
     gap: 6px;
     padding-bottom: 20px;
     margin-bottom: 0.8rem;
-  }
+}
 
-  .timeline-track::before {
+.timeline-track::before {
     content: '';
     position: absolute;
-    left: 0; right: 0;
+    left: 0;
+    right: 0;
     bottom: 20px;
     height: 1px;
     background: var(--border);
-  }
+}
 
-  .tl-col {
+.tl-col {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -1336,34 +1427,36 @@ body::after {
     position: relative;
     height: 100%;
     padding-bottom: 20px;
-  }
+}
 
-  .tl-bar {
+.tl-bar {
     width: 100%;
     border-radius: 2px 2px 0 0;
     position: relative;
     transition: height 1s ease;
     cursor: pointer;
-  }
+}
 
-  .tl-bar:hover { filter: brightness(1.5); }
+.tl-bar:hover {
+    filter: brightness(1.5);
+}
 
-  .tl-bar.correct {
+.tl-bar.correct {
     background: linear-gradient(180deg, var(--green), #00cc6688);
     box-shadow: 0 0 10px #00ff8866;
-  }
+}
 
-  .tl-bar.wrong {
+.tl-bar.wrong {
     background: linear-gradient(180deg, var(--red), #cc003388);
     box-shadow: 0 0 10px #ff225566;
-  }
+}
 
-  .tl-bar.skipped {
+.tl-bar.skipped {
     background: linear-gradient(180deg, var(--yellow), #cc990088);
     box-shadow: 0 0 8px #ffd60044;
-  }
+}
 
-  .tl-bar::after {
+.tl-bar::after {
     content: attr(data-tip);
     position: absolute;
     bottom: calc(100% + 6px);
@@ -1382,11 +1475,13 @@ body::after {
     letter-spacing: 0.5px;
     z-index: 10;
     clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
-  }
+}
 
-  .tl-bar:hover::after { opacity: 1; }
+.tl-bar:hover::after {
+    opacity: 1;
+}
 
-  .tl-label {
+.tl-label {
     position: absolute;
     bottom: 0;
     font-family: 'Share Tech Mono', monospace;
@@ -1394,15 +1489,15 @@ body::after {
     color: var(--muted);
     letter-spacing: 0.5px;
     white-space: nowrap;
-  }
+}
 
-  .tl-legend {
+.tl-legend {
     display: flex;
     gap: 1.2rem;
     align-items: center;
-  }
+}
 
-  .legend-item {
+.legend-item {
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -1410,21 +1505,22 @@ body::after {
     font-size: 0.55rem;
     color: var(--muted);
     letter-spacing: 1px;
-  }
+}
 
-  .legend-dot {
-    width: 8px; height: 8px;
+.legend-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 1px;
-  }
+}
 
-  
-  /* QUIZ PAGE */
-  .quiz-page {
+
+/* QUIZ PAGE */
+.quiz-page {
     height: 100vh;
     display: flex;
-  }
+}
 
-  /* QUIZ MAIN */
+/* QUIZ MAIN */
 /* 1. Ensure the main container is ready to hold the overlay */
 .quiz-main {
     flex: 1;
@@ -1433,51 +1529,57 @@ body::after {
     flex-direction: column;
     gap: 1rem;
     overflow: hidden;
-    position: relative; /* <--- CRITICAL: Keeps the overlay trapped inside! */
+    position: relative;
+    /* <--- CRITICAL: Keeps the overlay trapped inside! */
 }
 
 /* 2. The Idle Curtain (The Bulldozer) */
 .quiz-idle {
-    position: absolute !important; 
+    position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    z-index: 100 !important; /* Forces it to sit on top of everything */
-    background: var(--bg) !important; /* Solid background hides the quiz behind it */
-    
-    display: none; /* Hidden by default */
+    z-index: 100 !important;
+    /* Forces it to sit on top of everything */
+    background: var(--bg) !important;
+    /* Solid background hides the quiz behind it */
+
+    display: none;
+    /* Hidden by default */
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1.4rem;
 }
 
-  /* grid bg */
-  .quiz-idle::before {
+/* grid bg */
+.quiz-idle::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
     background-size: 40px 40px;
     opacity: 0.4;
-  }
+}
 
-  /* center glow */
-  .quiz-idle::after {
+/* center glow */
+.quiz-idle::after {
     content: '';
     position: absolute;
-    width: 400px; height: 400px;
+    width: 400px;
+    height: 400px;
     border-radius: 50%;
     background: radial-gradient(circle, #00e5ff06, transparent 65%);
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-  }
+}
 
-  .idle-icon {
+.idle-icon {
     font-family: 'Orbitron', monospace;
     font-size: 3.5rem;
     color: var(--muted);
@@ -1485,14 +1587,23 @@ body::after {
     position: relative;
     z-index: 1;
     text-shadow: 0 0 30px #3a4a5a88;
-  }
+}
 
-  @keyframes idlePulse {
-    0%, 100% { opacity: 0.25; transform: scale(1);    }
-    50%       { opacity: 0.7;  transform: scale(1.08); }
-  }
+@keyframes idlePulse {
 
-  .idle-title {
+    0%,
+    100% {
+        opacity: 0.25;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.08);
+    }
+}
+
+.idle-title {
     font-family: 'Orbitron', monospace;
     font-size: 1.1rem;
     font-weight: 700;
@@ -1500,9 +1611,9 @@ body::after {
     letter-spacing: 5px;
     position: relative;
     z-index: 1;
-  }
+}
 
-  .idle-sub {
+.idle-sub {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.62rem;
     color: #6c7a86;
@@ -1513,10 +1624,10 @@ body::after {
     opacity: 0.7;
     position: relative;
     z-index: 1;
-  }
+}
 
-  /* dashed border box around text */
-  .idle-box {
+/* dashed border box around text */
+.idle-box {
     border: 1px dashed var(--muted);
     padding: 2rem 3rem;
     display: flex;
@@ -1528,9 +1639,9 @@ body::after {
     z-index: 1;
     opacity: 0.55;
     background: #00e5ff03;
-  }
+}
 
-  .idle-btn {
+.idle-btn {
     background: transparent;
     border: 1px solid var(--cyan);
     color: var(--cyan);
@@ -1546,41 +1657,66 @@ body::after {
     z-index: 1;
     opacity: 0.8;
     overflow: hidden;
-  }
+}
 
-  .idle-btn::before {
+.idle-btn::before {
     content: '';
     position: absolute;
-    left: -100%; top: 0; bottom: 0;
+    left: -100%;
+    top: 0;
+    bottom: 0;
     width: 60%;
     background: linear-gradient(90deg, transparent, #00e5ff15, transparent);
     transition: left 0.5s;
-  }
+}
 
-  .idle-btn:hover::before { left: 150%; }
-  .idle-btn:hover {
+.idle-btn:hover::before {
+    left: 150%;
+}
+
+.idle-btn:hover {
     opacity: 1;
     box-shadow: 0 0 25px #00e5ff22;
     background: #00e5ff08;
-  }
+}
 
-  /* corner decorations */
-  .corner {
+/* corner decorations */
+.corner {
     position: absolute;
-    width: 20px; height: 20px;
+    width: 20px;
+    height: 20px;
     border-color: var(--muted);
     border-style: solid;
     opacity: 0.3;
     z-index: 1;
-  }
+}
 
-  .corner-tl { top: 2rem; left: 2rem; border-width: 1px 0 0 1px; }
-  .corner-tr { top: 2rem; right: 2rem; border-width: 1px 1px 0 0; }
-  .corner-bl { bottom: 2rem; left: 2rem; border-width: 0 0 1px 1px; }
-  .corner-br { bottom: 2rem; right: 2rem; border-width: 0 1px 1px 0; }
+.corner-tl {
+    top: 2rem;
+    left: 2rem;
+    border-width: 1px 0 0 1px;
+}
 
-  /* blinking cursor line */
-  .idle-cursor {
+.corner-tr {
+    top: 2rem;
+    right: 2rem;
+    border-width: 1px 1px 0 0;
+}
+
+.corner-bl {
+    bottom: 2rem;
+    left: 2rem;
+    border-width: 0 0 1px 1px;
+}
+
+.corner-br {
+    bottom: 2rem;
+    right: 2rem;
+    border-width: 0 1px 1px 0;
+}
+
+/* blinking cursor line */
+.idle-cursor {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.65rem;
     color: var(--cyan);
@@ -1588,14 +1724,21 @@ body::after {
     position: relative;
     z-index: 1;
     opacity: 0.5;
-  }
+}
 
-  .idle-cursor::after {
+.idle-cursor::after {
     content: '█';
     animation: blink 1s step-end infinite;
-  }
+}
 
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
-  }
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

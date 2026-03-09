@@ -1,8 +1,9 @@
 import { checkDailyStreak } from "./utils/streak.js";
 import { totalXP } from "./utils/XP.js";
 import { generateLevel } from "./utils/level.js";
-import {generateTopicsHtml} from "./data/aiScan.js";
+import { generateTopicsHtml } from "./data/aiScan.js";
 import { displayApiPanel } from "./data/api.js";
+import { go, toggleChips } from '../script.js';
 displayApiPanel();
 
 
@@ -15,12 +16,9 @@ export let quizInfo = {
 }; // getting updated by event listener in quiz.js
 //assigning default values to the variables 
 
-export function generateHomeHtml(){
+export function generateHomeHtml() {
     const topicInput = document.querySelector('.js-topic-input');
-    if(topicInput.value) topicInput.value = ''; //clearing the user's topic input after quiz
-    
-    //generating the html of topics fetched when prev quiz ended ,page is reloded
-    generateTopicsHtml();
+    if (topicInput.value) topicInput.value = ''; //clearing the user's topic input after quiz
 
     //updating the  hero section
     checkDailyStreak(); //updating the streak badge in hero section
@@ -56,7 +54,7 @@ document.querySelector('.api-input-field').addEventListener('input', e => {
     validateKey(e.target.value);
 });
 document.querySelector('.api-input-field').addEventListener('keydown', e => {
-    if(e.key === 'Enter') document.querySelector('.api-confirm').click();
+    if (e.key === 'Enter') document.querySelector('.api-confirm').click();
 });
 
 document.querySelector('.api-toggle').addEventListener('click', () => {
@@ -70,3 +68,4 @@ document.querySelector('.api-skip').addEventListener('click', () => {
 document.querySelector('.api-confirm').addEventListener('click', () => {
     confirmKey();
 });
+

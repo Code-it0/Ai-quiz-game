@@ -1,14 +1,22 @@
-import { loadQuizInfo } from './storage.js';
+import { loadQuizInfo, getReportCard } from './storage.js';
 import { loadApiKey } from './api.js';
+import { toggleChips, pick } from '../../script.js';
 //Ai scan function here
-function generateTopicsPrompt() {
+function generateTopicsPrompt(recon) {
   const history = loadQuizInfo();
   const recentTopics = history.slice(-10).map(quiz => quiz.quizTopic); //gives an array with max 10 elements , less if history has less elements
 
   let prompt;
-
+  if (recon) {
+    const quizReport = getReportCard();
+    const weakDataString = quizReport.map(q => q.questionText).join(' | ');
+    prompt = `A user recently failed or skipped quiz questions containing these concepts/details: ${weakDataString}. 
+    Analyze these specific weak points and generate 8 highly targeted practice topics to help them improve. 
+    CRITICAL: Each topic MUST be strictly 1 to 3 words maximum (e.g., "Promise API", "React State", "Domain Expansion"). Do NOT use full sentences or filler words like "Introduction to" or "Learn about".
+    Return ONLY a JSON object with a single root key named exactly "aiTopics" containing an array of 8 strings.`;
+  }
   // If they haven't played anything yet (just the default game)
-  if (recentTopics.length === 1 && recentTopics[0] === 'Javascript basics') {
+  else if (recentTopics.length === 1 && recentTopics[0] === 'Javascript basics') {
     prompt = `Generate 8 highly engaging, popular quiz topics for a trivia game. 
     CRITICAL: Each topic MUST be strictly 1 to 2 words maximum (e.g., "Geography", "Pop Culture"). Do NOT use phrases like "Introduction to" or "Basics of".
     Return ONLY a JSON object with a single root key named exactly "aiTopics" containing an array of 8 strings.`;
@@ -23,12 +31,12 @@ function generateTopicsPrompt() {
 }
 
 
-export async function fetchTopics() {
+export async function fetchTopics(recon = false) {
 
   try {
     const GROQ_API_KEY = loadApiKey();
     if (!GROQ_API_KEY) throw new Error("API key not registered"); // Load API key or throw an error to go with default topics if not found
-    const myPrompt = generateTopicsPrompt();
+    const myPrompt = generateTopicsPrompt(recon);
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -60,24 +68,33 @@ export async function fetchTopics() {
     // If the model wraps the array in an object (e.g., {"aiTopics": [...]})
 
     const { aiTopics } = JSON.parse(text); //as it return the array  inside a object with key aiTopics
-
-    saveTopics(aiTopics); //saving the topics to local storage for generation of ai topics 
-    generateTopicsHtml(); //generating the html if user goes back to home page to start new quiz , clicks ai scan
+    saveTopics(aiTopics, recon); //saving the topics to local storage for generation of ai topics 
+    generateTopicsHtml(recon); //generating the html if user goes back to home page to start new quiz , clicks ai scan
 
   } catch (error) {
     console.log('Error fetching topics:', error);
-    generateTopicsHtml(); //incase the fetch fails i use previous data from local storage to generate the chips...
+    generateTopicsHtml(recon); //incase the fetch fails i use previous data from local storage to generate the chips...
     //throw error;
   }
 }
 
 
-function saveTopics(topics) {
-  localStorage.setItem('topics', JSON.stringify(topics));
+
+function saveTopics(topics, isRecon = false) {
+  const storageKey = isRecon ? 'reconTopics' : 'topics';
+  localStorage.setItem(storageKey, JSON.stringify(topics));
 }
-function loadTopics() {
-  let data = JSON.parse(localStorage.getItem('topics')) ||
-    [
+
+function loadTopics(isRecon = false) {
+  const storageKey = isRecon ? 'reconTopics' : 'topics';
+  let data = JSON.parse(localStorage.getItem(storageKey));
+
+  // If we have data, return it
+  if (data) return data;
+
+  // If no data exists, return the defaults ONLY for normal mode
+  if (!isRecon) {
+    return [
       "Web Development",
       "Anime & Manga",
       "Modern Cinema",
@@ -85,21 +102,87 @@ function loadTopics() {
       "Fitness & Health",
       "World Geography",
       "Hip Hop",
-      "General Science"];
-  return data;
+      "General Science"
+    ];
+  }
+  // If in recon mode and no data exists, return an empty array
+  return [];
 }
 
-export function generateTopicsHtml() {
-  const topics = loadTopics();
+function reconMode(flag) {
+  const aiBtn = document.querySelector('.ai-btn');
+  const inputBorder = document.querySelector('.topic-field');
+  const inputIcon = document.querySelector('.field-icon');
+
+  
+  if (flag) {
+    //.recon mode initialization
+    aiBtn.classList.add('recon');
+    aiBtn.textContent = '⮜ EXIT RECON';
+    
+    //Modifying the input box if its recon mode
+    const input = document.querySelector('.js-topic-input');
+    inputIcon.style.color = 'var(--red)';
+    inputBorder.style.setProperty('--focus-border-color', '#ff007755');
+    input.value = '';
+    input.classList.add('inRecon');
+    input.placeholder = '⚠  RECON MODE — PICK A WEAK ZONE ABOVE ▼';
+    input.style.color = 'var(--red)';
+    
+    // exiting recon mode
+  }
+  else {
+    //remove recon styling if it was there from prev recon scan
+    aiBtn.classList.remove('recon');
+    
+    //Modifying the input box back to normal if its recon mode else do Nothing
+    const input = document.querySelector('.js-topic-input.inRecon');
+    if (input) {
+      inputIcon.style.color = 'var(--cyan)';
+      inputBorder.style.setProperty('--focus-border-color', '#00e5ff55');
+      input.classList.remove('inRecon');
+      input.placeholder = 'ENTER SUBJECT — e.g. JavaScript, Photosynthesis…';
+      input.value = '';
+      input.style.color = '';
+    }
+  }
+}
+
+export function generateTopicsHtml(isRecon = false) {
+  const topics = loadTopics(isRecon);
+  console.log(topics);
   const topicsContainer = document.querySelector('.js-topics');
-  if (!topicsContainer) return; // If the container doesn't exist, exit the function
-  topicsContainer.innerHTML = ''; // Clear existing topics
+
+  if (!topicsContainer || topics.length === 0) return;
+
+  topicsContainer.innerHTML = '';
+
+  reconMode(isRecon, topics[0]); //Alter the button and the input box based on the recon condition
+
   topics.forEach(topic => {
     const div = document.createElement('div');
     div.classList.add('chip');
+
+    // Add the special recon styling if the flag is true
+    if (isRecon) {
+      div.classList.add('chip', 'weak');
+    }
     div.textContent = topic;
     topicsContainer.appendChild(div);
     div.addEventListener('click', () => pick(div));
   });
 }
-generateTopicsHtml();
+
+export function reconFetchTopics() {
+  fetchTopics(true);
+}
+
+// Grab your existing AI Scan button (use your actual class or ID here)
+document.querySelector('.ai-btn').addEventListener('click', () => {
+  //generating the html of topics fetched when prev quiz ended ,page is reloded
+  generateTopicsHtml(false); //genrate ai topics when clicked
+  toggleChips(false); //show or hide the ai topics 
+});
+
+
+

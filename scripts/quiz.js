@@ -4,8 +4,12 @@ import { saveToStorage, SaveQuizINfo, questionLogPush, SaveQuestionLog } from '.
 import { calculateXP, resetStreakXP } from './utils/XP.js';
 import { updateStreak } from './utils/streak.js';
 import { quizInfo, generateHomeHtml } from './home.js';
-import { fetchTopics } from './data/aiScan.js';
+import { fetchTopics,reconFetchTopics } from './data/aiScan.js';
 import { generateResults } from './results.js';
+import { go } from '../script.js';
+
+
+export let quizFlag = false; //represents if quiz is ongoing 
 
 
 let questions = defaultQuestions; // Initialize with default questions, will be replaced by fetched questions when quiz starts
@@ -113,6 +117,7 @@ export function nextQuestion() {
     if (currentIndex < questions.length) {
         generateQuestion(questions[currentIndex]);
     } else {
+        quizFlag = false;
         generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel to remove 'now' class from last cell when quiz is over
         currentIndex = 0; //reset current index for next quiz attempt
         // all questions done → go to results
@@ -123,6 +128,7 @@ export function nextQuestion() {
         generateResults(); //generate results before navigating to results page to ensure the data is ready for results page when it loads
         go('results', 2);
         fetchTopics(); //getting Ai topics for the next quiz , storing in local storage
+        reconFetchTopics();
         setQuizIdleState();
         generateHomeHtml(); // update the hero section in home page after quiz attempt to reflect any change in streak,xp or level
     }
@@ -171,6 +177,7 @@ function selOpt(el, selected) {
 
 document.querySelector('.js-launch-btn').addEventListener('click', async () => {
     // start with first question
+    quizFlag = true;
     resetStreakXP();
     resetTimerStats();
     scoreData = { quizId: null, correct: 0, wrong: 0, totalAnswered: 0, totalQuestions: quizInfo.rounds, accuracy: 0, xp: 0, maxStreak: 0 }; //resetting scoreData

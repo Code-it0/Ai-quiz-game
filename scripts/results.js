@@ -1,4 +1,6 @@
 import { loadFromStorageById,loadQuizInfoById,LoadQuestionLogById } from './data/storage.js';
+import { generateTopicsHtml } from './data/aiScan.js';
+import { go, toggleChips } from '../script.js';
 export function generateResults() {
     const scoreData = loadFromStorageById('recent'); // load current score data (index 0 since it's the most recent)
     console.log(scoreData);
@@ -183,3 +185,9 @@ export function generateBattleLog(questionLog, timePerQue) {
 
 generateResults(); //defaualt => recent quiz data
 
+document.querySelector('.js-recon-topics').addEventListener('click', () => {
+    generateTopicsHtml(true); //regenerating the html of topics fetched for recon when user clicks on recon weak zones button on results page
+    toggleChips(true);
+    go('home', 0); // navigate to home page to show the ai generated topics when user clicks on recon weak zones button on results page
+
+});

@@ -2,10 +2,12 @@
 import './scripts/home.js';
 import './scripts/quiz.js';
 import './scripts/results.js';
+import { quizFlag } from './scripts/quiz.js';
+import { generateTopicsHtml } from './scripts/data/aiScan.js';
 
 // switches between pages (home/quiz/results) and highlights the correct nav tab
 console.log('connected');
-function go(id, idx) {
+export function go(id, idx) {
   // hide all pages
   ['home', 'quiz', 'results'].forEach(p => {
     const el = document.getElementById(p);
@@ -27,14 +29,32 @@ function go(id, idx) {
 
 
 // toggles the topic chip dropdown open/closed
-function toggleChips() {
+export function toggleChips(visibility) {
   const c = document.getElementById('chips');
-  c.style.display = c.style.display === 'none' ? 'flex' : 'none';
-}
+  const reconLbl = document.querySelector('.js-weak-chips');
+  if (visibility === true) {
+    c.style.display = 'flex';
+    reconLbl.style.display = 'block';
+  } //compulsary show chips
+  else {
+    const aiBtn = document.querySelector('.ai-btn')
+    reconLbl.style.display = 'none';
+    if (c.style.display === 'none') {
+      c.style.display = 'flex';
+      // when chips open
+      aiBtn.textContent = 'AI SCAN ▼';
+    }
+    else {
+      c.style.display = 'none';
+      // normal mode
+      aiBtn.textContent = 'AI SCAN ▶';
+    }
+  } //compulsary show chips
+} //normal case: toggle
 
 
 // fills the topic input with the clicked chip's text, then closes the dropdown
-function pick(el) {
+export function pick(el) {
   document.getElementById('topicInput').value = el.textContent;
   document.getElementById('chips').style.display = 'none';
 }
@@ -53,6 +73,7 @@ setInterval(() => {
 const tabs = ['home', 'quiz', 'results'];
 let i = 0;
 window.addEventListener('keydown', e => {
+  if (quizFlag) return;
   if (e.key === 'ArrowRight') {
     if (tabs[i + 1]) i++;
     else i = 0;
