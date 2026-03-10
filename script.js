@@ -33,10 +33,11 @@ export function go(id) {
 // toggles the topic chip dropdown open/closed
 export function toggleChips(visibility) {
   const c = document.getElementById('chips');
-  const reconDiv = document.querySelector('.js-weak-chips');
+  const reconDiv = document.getElementById('weakChips');
+  console.log(reconDiv.innerHTML);
   if (visibility === true) {
-    c.style.display = 'flex';
     reconDiv.style.display = 'block';
+    c.style.display = 'flex';
   } //compulsary show chips
   else {
     const aiBtn = document.querySelector('.ai-btn')

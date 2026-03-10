@@ -6,17 +6,13 @@ export let intervalId;
 let timerPaused = false; //variable to track if timer is paused 
 
 export function startTimer(onTimeUP,resume = false) {
-    console.log('timer started');
     //stop interval after timer is over\
     if (intervalId) clearInterval(intervalId);
     if(timerPaused) return; //if timer is paused do not go for the next cycle
     if(!resume) t = quizInfo.timePerQue * 10; // reset time for each question //calculating in terms of 100ms for smoother bar animation (e.g. 30s = 300 ticks of 100ms) // if resume is true do not reset time, continue from where it was paused
     bar.style.width = '100% ';
     bar.style.background = 'linear-gradient(90deg, var(--cyan), var(--green))';
-    console.log('timer started');
-    console.log(t);
     intervalId = setInterval(() => {
-        console.log(t);
         if (t > 0) t--;
         else {
             clearInterval(intervalId);
@@ -31,7 +27,7 @@ export function startTimer(onTimeUP,resume = false) {
             let pct = (t / quizInfo.timePerQue) * 10; //=== (t/10 /timeperque)*100         // 30s = 100% full bar t/ 10 cuz multiplied it by 10 earlier 
             pct = Math.max(0, Math.min(100, pct)); //pct can be only between 0 and 100
             bar.style.width = pct + '%';
-            if (t < 10) bar.style.background = 'linear-gradient(90deg,var(--red),var(--orange))';
+            if (t < 100) bar.style.background = 'linear-gradient(90deg,var(--red),var(--orange))';
         }
     }, 100);
 }
@@ -60,7 +56,6 @@ export function timeTakenForQue() {
 export let timeleft = 0; //variable to store time left for XP calculation (only for correct answers)
 export function addTimeleft() {
     timeleft += Math.ceil(t / 10); // adding time left when user answers correctly, to calculate bonus XP based on time left
-    console.log(timeleft);
 }
 
 export function resetTimerStats() {

@@ -1,10 +1,10 @@
-import { startTimer, stopTimer, addTimeleft, totalTimeTaken,timeTakenForQue, resetTimerStats ,pauseTimer , resumeTimer } from './utils/timer.js';
+import { startTimer, stopTimer, addTimeleft, totalTimeTaken, timeTakenForQue, resetTimerStats, pauseTimer, resumeTimer } from './utils/timer.js';
 import { defaultQuestions, fetchQuestions, autoAdaptDifficulty } from './data/questions.js';
 import { saveToStorage, SaveQuizINfo, questionLogPush, SaveQuestionLog } from './data/storage.js';
 import { calculateXP, resetStreakXP } from './utils/XP.js';
 import { updateStreak } from './utils/streak.js';
 import { quizInfo, generateHomeHtml } from './home.js';
-import { fetchTopics,reconFetchTopics } from './data/aiScan.js';
+import { fetchTopics, reconFetchTopics } from './data/aiScan.js';
 import { generateResults } from './results.js';
 import { go } from '../script.js';
 
@@ -109,19 +109,28 @@ function onTimesUp() {
     }, 1500);
 }
 
+function resetValues() {
+    quizFlag = false;
+    currentIndex = 0; //reset current index for next quiz attempt
+    // all questions done → go to results    quizFlag = true;
+    xp=0;
+    accuracy=0;
+    streak = 0;
+    resetStreakXP();
+    resetTimerStats();
+    scoreData = { quizId: null, correct: 0, wrong: 0, totalAnswered: 0, totalQuestions: quizInfo.rounds, accuracy: 0, xp: 0, maxStreak: 0 }; //resetting scoreData
+}
+
 export function nextQuestion() {
     console.log('Next question');
-    if(quizPaused) return; // if quiz is paused then return to stop the flow of quiz
+    if (quizPaused) return; // if quiz is paused then return to stop the flow of quiz
     currentIndex++;
     isQuestionResolved = false; // mark question as unresolved for the next question
     questionLogPush(questionEntry); //push after each question is answered.. hence inside nextQuestion()
     if (currentIndex < questions.length) {
         generateQuestion(questions[currentIndex]);
     } else {
-        quizFlag = false;
         generateProgGridPanel(questions, currentIndex + 1); // update progress grid panel to remove 'now' class from last cell when quiz is over
-        currentIndex = 0; //reset current index for next quiz attempt
-        // all questions done → go to results
         scoreData['averageTime'] = Math.round(totalTimeTaken / scoreData.totalAnswered) || quizInfo.timePerQue; // calculate average time per question , if totalAnswered is 0 (can happen if user skips all questions) then set average time to timePerQue to avoid division by zero and to be fair to the user in XP calculation as well
         SaveQuestionLog(); //saving the question log when the game ends
         SaveQuizINfo(quizInfo); //only save when quiz is over
@@ -132,6 +141,7 @@ export function nextQuestion() {
         reconFetchTopics();
         setQuizIdleState();
         generateHomeHtml(); // update the hero section in home page after quiz attempt to reflect any change in streak,xp or level
+        resetValues(); // reset values for the next quiz attempt
     }
 }
 export function showCorrectOpt() {
@@ -179,10 +189,7 @@ function selOpt(el, selected) {
 document.querySelector('.js-launch-btn').addEventListener('click', async () => {
     // start with first question
     quizFlag = true;
-    resetStreakXP();
-    resetTimerStats();
-    scoreData = { quizId: null, correct: 0, wrong: 0, totalAnswered: 0, totalQuestions: quizInfo.rounds, accuracy: 0, xp: 0, maxStreak: 0 }; //resetting scoreData
-    quizInfo.quizTopic = document.querySelector('.js-topic-input').value.trim() || 'Javascript-basics';// get the quiz topic from the input field, default to 'Javascript-basics' if empty
+        quizInfo.quizTopic = document.querySelector('.js-topic-input').value.trim() || 'Javascript-basics';// get the quiz topic from the input field, default to 'Javascript-basics' if empty
     let timeInput = document.querySelector('.js-time-input').value.replace('SEC', '').trim() || '5';
     // get time per question from input, default to 5 seconds
     quizInfo.timePerQue = Number(timeInput);//reseting time variable
@@ -345,21 +352,21 @@ export function setQuizIdleState() {
     }
 
     const abortBtn = document.querySelector('.sidebar-exit');
-    if(abortBtn) abortBtn.style.display='none';
+    if (abortBtn) abortBtn.style.display = 'none';
 }
 
-document.querySelectorAll('.exit-btn').forEach(tab=>{
-    tab.addEventListener('click',e =>{
+document.querySelectorAll('.exit-btn').forEach(tab => {
+    tab.addEventListener('click', e => {
         const page = e.currentTarget.getAttribute('data-tab');
         console.log(page);
-        if(quizFlag && page !== 'quiz'){
+        if (quizFlag && page !== 'quiz') {
             //this block represents quiz is ongoing
-            quizPaused = true; 
+            quizPaused = true;
             pauseTimer();
             showExitOverlay(page);
         }
-        else{
-           go(page);
+        else {
+            go(page);
         }
 
     })
@@ -367,12 +374,12 @@ document.querySelectorAll('.exit-btn').forEach(tab=>{
 
 
 
-function showExitOverlay(page){
+function showExitOverlay(page) {
     const overlay = document.querySelector('.exit-overlay');
     //updating the overlay data with actual quiz data before getting displayed
     const statScore = document.getElementById('statScore');
     statScore.textContent = `${scoreData.correct}/${scoreData.totalAnswered}`;
-    
+
     const statXp = document.getElementById('statXP');
     statXp.textContent = `+${xp}`;
     const statStreak = document.getElementById('statStreak');
@@ -381,27 +388,25 @@ function showExitOverlay(page){
     //all values updated , showing the overlay on scree
     overlay.classList.remove('hidden');
     let clicked = false; //to make sure user doesn't click both buttons
-    document.querySelector('.btn-stay').addEventListener('click',()=>{
-        if(clicked) return;
+    document.querySelector('.btn-stay').addEventListener('click', () => {
+        if (clicked) return;
         clicked = true;
         //quiz resume
         overlay.classList.add('hidden'); //hide overlay after button clicked
         resumeTimer(onTimesUp);
         quizPaused = false;
         overlay.classList.add('hidden');
-    },{once:true});
-    document.querySelector('.btn-exit').addEventListener('click',()=>{
-        if(clicked) return;
+    }, { once: true });
+    document.querySelector('.btn-exit').addEventListener('click', () => {
+        if (clicked) return;
         clicked = true;
         stopTimer();//stop the timer when userr decides to exit
         //quiz exit
         go(page);
         setQuizIdleState();
-        currentIndex = 0; //reset current index for next quiz attempt
-        quizFlag = false; //reset for next quiz
-        quizPaused = false; //as  quiz is over reset it 
+        resetValues();
         overlay.classList.add('hidden');
-    },{once:true});
+    }, { once: true });
 
 
 

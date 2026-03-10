@@ -114,12 +114,12 @@ function reconMode(flag) {
   const inputBorder = document.querySelector('.topic-field');
   const inputIcon = document.querySelector('.field-icon');
 
-  
+
   if (flag) {
     //.recon mode initialization
     aiBtn.classList.add('recon');
     aiBtn.textContent = '⮜ EXIT RECON';
-    
+
     //Modifying the input box if its recon mode
     const input = document.querySelector('.js-topic-input');
     inputIcon.style.color = 'var(--red)';
@@ -128,13 +128,13 @@ function reconMode(flag) {
     input.classList.add('inRecon');
     input.placeholder = '⚠  RECON MODE — PICK A WEAK ZONE ABOVE ▼';
     input.style.color = 'var(--red)';
-    
+
     // exiting recon mode
   }
   else {
     //remove recon styling if it was there from prev recon scan
     aiBtn.classList.remove('recon');
-    
+
     //Modifying the input box back to normal if its recon mode else do Nothing
     const input = document.querySelector('.js-topic-input.inRecon');
     if (input) {
@@ -150,25 +150,40 @@ function reconMode(flag) {
 
 export function generateTopicsHtml(isRecon = false) {
   const topics = loadTopics(isRecon);
-  console.log(topics);
+  const apiKey = loadApiKey();
+  if (!apiKey) { //if no api key then no Ai scan
+    const reconLbl = document.querySelector('.weak-chips-label');
+    const reconLogo = document.querySelector('.weak-chips-icon');
+    reconLogo.textContent = '◈';
+    reconLbl.textContent = "NO NEURAL LINK — COMPLETE AI SETUP TO SCAN";
+    toggleChips(true); //show the recon chips with the message to set api key
+    setTimeout(() => {
+      reconLogo.textContent = '⚠';
+      reconLbl.textContent = "WEAK ZONES DETECTED — SELECT TO RECON";
+      toggleChips(false);
+    }, 3000);
+    return;
+  }
+
   const topicsContainer = document.querySelector('.js-topics');
-  if(topics.length === 0|| isRecon) {
+  if (topics.length === 0 && isRecon) {
     const reconLbl = document.querySelector('.weak-chips-label');
     const reconLogo = document.querySelector('.weak-chips-icon');
     reconLogo.textContent = '◈';
     reconLbl.textContent = "NO MISSION DATA — PLAY A QUIZ FIRST";
-    setTimeout(()=>{
+    toggleChips(true);
+    setTimeout(() => {
       reconLogo.textContent = '⚠';
       reconLbl.textContent = "WEAK ZONES DETECTED — SELECT TO RECON";
       toggleChips(false);
-    },4000);
+    }, 3000);
+    return;
   }
   if (!topicsContainer || topics.length === 0) return;
 
   topicsContainer.innerHTML = '';
 
   reconMode(isRecon); //Alter the button and the input box based on the recon condition
-
   topics.forEach(topic => {
     const div = document.createElement('div');
     div.classList.add('chip');
@@ -181,6 +196,7 @@ export function generateTopicsHtml(isRecon = false) {
     topicsContainer.appendChild(div);
     div.addEventListener('click', () => pick(div));
   });
+  toggleChips(isRecon);
 }
 
 export function reconFetchTopics() {
@@ -191,7 +207,6 @@ export function reconFetchTopics() {
 document.querySelector('.ai-btn').addEventListener('click', () => {
   //generating the html of topics fetched when prev quiz ended ,page is reloded
   generateTopicsHtml(false); //genrate ai topics when clicked
-  toggleChips(false); //show or hide the ai topics 
 });
 
 
