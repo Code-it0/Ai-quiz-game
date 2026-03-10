@@ -1,16 +1,15 @@
 import { checkDailyStreak } from "./utils/streak.js";
 import { totalXP } from "./utils/XP.js";
 import { generateLevel } from "./utils/level.js";
-import { generateTopicsHtml } from "./data/aiScan.js";
 import { displayApiPanel } from "./data/api.js";
-import { go, toggleChips } from '../script.js';
+import { go } from '../script.js';
 displayApiPanel();
 
 
 export let quizInfo = {
     quizId: null, // will be assigned when saving quiz info to local storage
     quizTopic: 'Javascript basics',
-    timePerQue: '5',
+    timePerQue: '30',
     difficulty: 'Auto-Adapt',
     rounds: '10'
 }; // getting updated by event listener in quiz.js

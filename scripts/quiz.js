@@ -185,7 +185,7 @@ document.querySelector('.js-launch-btn').addEventListener('click', async () => {
     quizInfo.quizTopic = document.querySelector('.js-topic-input').value.trim() || 'Javascript-basics';// get the quiz topic from the input field, default to 'Javascript-basics' if empty
     let timeInput = document.querySelector('.js-time-input').value.replace('SEC', '').trim() || '5';
     // get time per question from input, default to 5 seconds
-    quizInfo.timePerQue = 5;
+    quizInfo.timePerQue = Number(timeInput);//reseting time variable
     quizInfo.difficulty = document.querySelector('.js-diff-input').value.trim() || 'Auto-Adapt';
 
     quizInfo.rounds = document.querySelector('.js-rounds-input').value.trim() || '10';
@@ -364,6 +364,7 @@ document.querySelectorAll('.exit-btn').forEach(tab=>{
 
     })
 });
+
 
 
 function showExitOverlay(page){

@@ -1,6 +1,8 @@
 
 export function saveToStorage(scoreData) {
   let Sdata = loadFromStorage();
+  if (Sdata.length === 3) Sdata.shift(); // if 3 items present in the array then remove the default score data that was added just to display dummy data
+  console.log('saved:',Sdata)
   scoreData.quizId = Sdata.length + 1; // assign quizId based on current length of stored data (1 for first quiz, 2 for second quiz etc.)
   Sdata.push(scoreData); //adding score data without deletig any previous data 
   localStorage.setItem('quizScore', JSON.stringify(Sdata));
@@ -34,6 +36,7 @@ export function loadFromStorageById(quizId) {
 
 export function SaveQuizINfo(quizInfo) {
   let data = loadQuizInfo();
+  if (data.length === 3) data.shift(); // if 3 items present in the array then remove the default score data that was added just to display dummy data
   quizInfo.quizId = data.length + 1; // assigning a quizId based on the current length of stored quiz info (ensures unique quizId for each quiz)
   data.push(quizInfo);
   localStorage.setItem('quizInfo', JSON.stringify(data));
@@ -70,6 +73,7 @@ export function questionLogPush(entry) {
 
 export function SaveQuestionLog() {
   let questionLog = LoadQuestionLog();
+  if (questionLog.length === 3) questionLog.shift(); // if 3 items present in the array then remove the default score data that was added just to display dummy data
   questionLog.push(QuestionLog); // addingk the question data at the end of the array
   localStorage.setItem('questionLog', JSON.stringify(questionLog));
   QuestionLog = []; //empting the global array once data saved
