@@ -127,11 +127,11 @@ body::after {
     font-size: 1.8rem;
     color: var(--cyan);
     text-shadow: 0 0 20px var(--cyan);
-    animation: iconPulse 2s ease-in-out infinite;
+    animation: cyaniconPulse 2s ease-in-out infinite;
     flex-shrink: 0;
 }
 
-@keyframes iconPulse {
+@keyframes cyaniconPulse {
 
     0%,
     100% {
@@ -139,7 +139,7 @@ body::after {
     }
 
     50% {
-        text-shadow: 0 0 35px var(--cyan), 0 0 60px #00e5ff44;
+        text-shadow: 0 0 35px var(--cyan), 0 0 60px #00e5ff7e;
     }
 }
 

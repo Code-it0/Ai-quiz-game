@@ -601,6 +601,61 @@ body::after {
     transform: translateY(-1px);
 }
 
+.api-reminder {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid #ff6b0033;
+  background: #ff6b0008;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  margin-top: 0.5rem;
+}
+
+.api-reminder-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
+  flex-shrink: 0;
+  animation: dotBlink 1.2s ease-in-out infinite;
+}
+
+@keyframes dotBlink {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1;   }
+}
+
+.api-reminder-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1px;
+  color: var(--orange);
+  opacity: 0.8;
+  flex: 1;
+}
+
+.api-reminder-btn {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 2px;
+  color: var(--orange);
+  background: #ff6b0015;
+  border: 1px solid #ff6b0055;
+  padding: 0.3rem 0.7rem;
+  cursor: crosshair;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.api-reminder-btn:hover {
+  background: #ff6b0025;
+  border-color: var(--orange);
+  box-shadow: 0 0 10px #ff6b0022;
+}
+
 /* ════════════════
      QUIZ / BATTLE
   ════════════════ */

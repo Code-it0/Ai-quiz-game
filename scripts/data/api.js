@@ -55,12 +55,13 @@ function validateKey(val) { // val is inputbox.value
 async function confirmKey() {
     const val = document.getElementById('apiKeyInput').value;
     if (!val) return;
-
+    
     //changing button to verifying
     const confirmBtn = document.getElementById('confirmBtn');
     confirmBtn.classList.add('verify');
     confirmBtn.textContent = '◈   VERIFYING...';
-
+    const remainder = document.getElementById('apiReminder');
+    
     let failiureMessage;
     try {
         // The Fetch Request: Ping the Groq API to check the key
@@ -88,19 +89,19 @@ async function confirmKey() {
         document.getElementById('apiBody').style.display = 'none';
         document.getElementById('apiFooter').style.display = 'none';
         document.querySelector('.api-privacy').style.display = 'none';
-
+        remainder.style.display = 'none';
+        
         const success = document.getElementById('apiSuccess');
         success.style.display = 'flex';
-
+        
         // Close after 2s
         setTimeout(() => {
             closeApiOverlay();
         }, 2000);
-
+        
     } catch (error) {
         // If the key is invalid OR their Wi-Fi drops, the code lands here safely
         console.error("Verification failed:", error);
-
         // Show an error message to the user so they know to fix it
         const failedMsg = document.getElementById('api-failed');
         failedMsg.innerHTML = failiureMessage || '✗ &nbsp; CHECK YOUR CONNECTION AND TRY AGAIN';

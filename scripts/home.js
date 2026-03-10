@@ -68,3 +68,12 @@ document.querySelector('.api-confirm').addEventListener('click', () => {
     confirmKey();
 });
 
+
+// clicking SET KEY reopens your api setup panel
+document.querySelector('.js-api-reminder-btn').addEventListener('click', () => {
+    console.log('clicked');
+    document.getElementById('apiOverlay').style.opacity = '1';
+        document.getElementById('apiOverlay').style.display = 'flex';
+    displayApiPanel();
+});
+
