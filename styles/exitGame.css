@@ -1,0 +1,310 @@
+:root {
+    --bg: #050508;
+    --panel: #0a0d14;
+    --card: #0d1017;
+    --border: #00e5ff18;
+    --cyan: #00e5ff;
+    --orange: #ff6b00;
+    --green: #00ff88;
+    --red: #ff2255;
+    --yellow: #ffd600;
+    --text: #c8d8e8;
+    --muted: #3a4a5a;
+    --dim: #1a2030;
+}
+
+/* ── OVERLAY ── */
+.exit-overlay {
+    position: fixed;
+    inset: 0;
+    background: #02020acc;
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    animation: overlayIn 0.3s ease;
+}
+
+.exit-overlay.hidden {
+    display: none;
+}
+
+@keyframes overlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ── PANEL ── */
+.exit-panel {
+    background: var(--card);
+    border: 1px solid #ff225544;
+    width: 420px;
+    clip-path: polygon(16px 0%, 100% 0%, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0% 100%, 0% 16px);
+    position: relative;
+    overflow: hidden;
+    animation: panelIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 60px #ff225510, 0 0 120px #ff225506;
+}
+
+@keyframes panelIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* grid bg */
+.exit-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(#ff225508 1px, transparent 1px),
+        linear-gradient(90deg, #ff225508 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* top red accent */
+.exit-panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    box-shadow: 0 0 15px var(--red);
+}
+
+/* ── HEADER ── */
+.exit-header {
+    padding: 1.4rem 1.6rem 1rem;
+    border-bottom: 1px solid #ff225522;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+
+.exit-icon {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    color: var(--red);
+    text-shadow: 0 0 20px var(--red);
+    animation: iconPulse 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+@keyframes iconPulse {
+
+    0%,
+    100% {
+        text-shadow: 0 0 15px var(--red);
+        opacity: 0.8;
+    }
+
+    50% {
+        text-shadow: 0 0 30px var(--red), 0 0 60px #ff225544;
+        opacity: 1;
+    }
+}
+
+
+.exit-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 4px;
+    color: var(--red);
+    margin-bottom: 0.25rem;
+}
+
+.exit-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+}
+
+/* ── BODY ── */
+.exit-body {
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    position: relative;
+}
+
+.exit-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.exit-desc strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* stats row — show what they'll lose */
+.exit-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.exit-stat {
+    background: var(--dim);
+    border: 1px solid var(--border);
+    padding: 0.6rem 0.8rem;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.exit-stat-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cyan);
+}
+
+.exit-stat-lbl {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.48rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+}
+
+/* warning line */
+.exit-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 1px;
+    color: var(--red);
+    background: #ff225508;
+    border: 1px solid #ff225522;
+    padding: 0.55rem 0.9rem;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+
+.exit-warning-icon {
+    animation: warnPulse 1s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes warnPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ── FOOTER ── */
+.exit-footer {
+    padding: 1rem 1.6rem 1.4rem;
+    display: flex;
+    gap: 0.6rem;
+    border-top: 1px solid #ff225518;
+    position: relative;
+}
+
+/* stay button — green */
+.btn-stay {
+    flex: 1;
+    background: linear-gradient(90deg, #00ff8810, #00ff8820);
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 3px;
+    padding: 0.75rem;
+    cursor: crosshair;
+    transition: all 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    text-shadow: 0 0 10px var(--green);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-stay::before {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    bottom: 0;
+    width: 60%;
+    background: linear-gradient(90deg, transparent, #00ff8818, transparent);
+    transition: left 0.4s;
+}
+
+.btn-stay:hover::before {
+    left: 150%;
+}
+
+.btn-stay:hover {
+    background: #00ff8825;
+    box-shadow: 0 0 20px #00ff8820;
+}
+
+/* exit button — red */
+.btn-exit {
+    flex: 1;
+    background: linear-gradient(90deg, #ff225510, #ff225520);
+    border: 1px solid #ff225566;
+    color: var(--red);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 3px;
+    padding: 0.75rem;
+    cursor: crosshair;
+    transition: all 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    text-shadow: 0 0 10px var(--red);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-exit::before {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    bottom: 0;
+    width: 60%;
+    background: linear-gradient(90deg, transparent, #ff225518, transparent);
+    transition: left 0.4s;
+}
+
+.btn-exit:hover::before {
+    left: 150%;
+}
+
+.btn-exit:hover {
+    background: #ff225525;
+    box-shadow: 0 0 20px #ff225520;
+    border-color: var(--red);
+}

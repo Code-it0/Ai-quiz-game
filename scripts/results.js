@@ -188,6 +188,6 @@ generateResults(); //defaualt => recent quiz data
 document.querySelector('.js-recon-topics').addEventListener('click', () => {
     generateTopicsHtml(true); //regenerating the html of topics fetched for recon when user clicks on recon weak zones button on results page
     toggleChips(true);
-    go('home', 0); // navigate to home page to show the ai generated topics when user clicks on recon weak zones button on results page
+    go('home'); // navigate to home page to show the ai generated topics when user clicks on recon weak zones button on results page
 
 });

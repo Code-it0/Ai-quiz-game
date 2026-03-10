@@ -41,7 +41,7 @@ document.querySelector('.js-topic-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') {
         if (e.target.value.trim() !== '') {
             const launchbtn = document.querySelector('.js-launch-btn');
-            go('quiz', 1); // navigate to quiz page 
+            go('quiz'); // navigate to quiz page 
             launchbtn.click();
             console.log('click');
         }

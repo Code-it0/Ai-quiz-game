@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="styles/loading.css">
   <link rel="stylesheet" href="styles/apiOverlay.css">
+  <link rel="stylesheet" href="styles/exitGame.css">
   <!-- <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap"
     rel="stylesheet"> -->
@@ -143,9 +144,9 @@
   <div class="hud-bar">
     <div class="hud-logo">NEURAL<span>QUIZ</span></div>
     <div class="nav-tabs">
-      <button class="nav-tab active" onclick="go('home',0)">MISSION</button>
-      <button class="nav-tab" onclick="go('quiz',1)">BATTLE</button>
-      <button class="nav-tab" onclick="go('results',2)">DEBRIEF</button>
+      <button class="nav-tab active exit-btn" data-tab='home'>MISSION</button>
+      <button class="nav-tab exit-btn" data-tab='quiz'>BATTLE</button>
+      <button class="nav-tab exit-btn" data-tab='results'>DEBRIEF</button>
     </div>
     <div class="hud-time" id="clock">00:00:00</div>
   </div>
@@ -190,7 +191,7 @@
           <div class="field-icon">&gt;_</div>
           <input class="topic-input js-topic-input" id="topicInput" type="text"
             placeholder="ENTER SUBJECT — e.g. JavaScript, Photosynthesis…" />
-          <button class="ai-btn normal-btn" >AI SCAN ▶</button>
+          <button class="ai-btn normal-btn">AI SCAN ▶</button>
         </div>
 
 
@@ -206,7 +207,7 @@
           <div class="chip" onclick="pick(this)">OS CONCEPTS</div>
           <div class="chip" onclick="pick(this)">WORLD WAR II</div> -->
         </div>
-        
+
         <div class="chips js-weak-chips" id="weakChips" style="display:none;">
           <div class="weak-chips-header">
             <span class="weak-chips-icon">⚠</span>
@@ -252,6 +253,60 @@
       </div>
 
     </div><!-- /home -->
+
+    <!-- exitGameOverlay -->
+    <div class="exit-overlay hidden" id="exitOverlay">
+      <div class="exit-panel">
+
+        <!-- header -->
+        <div class="exit-header">
+          <div class="exit-icon">⚠</div>
+          <div class="exit-header-text">
+            <div class="exit-title">ABORT MISSION?</div>
+            <div class="exit-sub">CURRENT SESSION WILL BE TERMINATED</div>
+          </div>
+        </div>
+
+        <!-- body -->
+        <div class="exit-body">
+
+          <div class="exit-desc">
+            You're in the middle of a mission. Leaving now will
+            <strong>forfeit your current score and XP</strong> — progress will not be saved.
+          </div>
+
+          <!-- live stats from quiz — showing what they'll lose -->
+          <div class="exit-stats">
+            <div class="exit-stat">
+              <div class="exit-stat-val" id="statScore">3 / 4</div>
+              <div class="exit-stat-lbl">CURRENT SCORE</div>
+            </div>
+            <div class="exit-stat">
+              <div class="exit-stat-val" id="statXP">+240</div>
+              <div class="exit-stat-lbl">XP AT RISK</div>
+            </div>
+            <div class="exit-stat" id="streakBadge">
+              <div class="exit-stat-val" id="statStreak">🔥 3</div>
+              <div class="exit-stat-lbl">MAX STREAK</div>
+            </div>
+          </div>
+
+          <div class="exit-warning">
+            <span class="exit-warning-icon">▸</span>
+            <span>ALL PROGRESS WILL BE LOST IF YOU EXIT NOW</span>
+          </div>
+
+        </div>
+
+        <!-- footer -->
+        <div class="exit-footer">
+          <button class="btn-stay">◈ &nbsp; STAY IN MISSION</button>
+          <button class="btn-exit">✕ &nbsp; ABORT MISSION</button>
+        </div>
+
+      </div>
+    </div>
+    <!-- /exitGameOverlay -->
 
     <!-- ═══════ QUIZ / BATTLE ═══════ -->
     <div class="page" id="quiz" style="display:none">
@@ -309,6 +364,11 @@
             <div class="streak-sub js-streak-msg">KEEP GOING</div>
           </div>
         </div>
+        <div class="sidebar-exit exit-btn" data-tab="home">
+          <button class="exit-quiz-btn js-exit-quiz-btn">
+            ✕ &nbsp; ABORT MISSION
+          </button>
+        </div>
       </div>
 
       <div class="quiz-main">
@@ -356,7 +416,7 @@
 
           <div class="idle-cursor">AWAITING INPUT </div>
 
-          <button class="idle-btn" onclick="go('home',0)">◄ &nbsp; GO TO MISSION SELECT</button>
+          <button class="idle-btn" onclick="go('home')">◄ &nbsp; GO TO MISSION SELECT</button>
 
         </div>
       </div>
@@ -500,7 +560,7 @@
         </div>
 
         <div class="actions">
-          <button class="act-ghost" onclick="go('home',0)">◄ NEW MISSION</button>
+          <button class="act-ghost" onclick="go('home')">◄ NEW MISSION</button>
           <button class="act-primary js-recon-topics">RECON WEAK ZONES ►</button>
         </div>
 

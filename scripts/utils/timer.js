@@ -3,13 +3,20 @@ const timePerQue = 5; //default for fast coding
 let t = timePerQue * 10; // time for each question
 const bar = document.getElementById('timerBar');
 export let intervalId;
-export function startTimer(onTimeUP) {
+let timerPaused = false; //variable to track if timer is paused 
+
+export function startTimer(onTimeUP,resume = false) {
+    console.log('timer started');
     //stop interval after timer is over\
     if (intervalId) clearInterval(intervalId);
-    t = timePerQue * 10; // reset time for each question //calculating in terms of 100ms for smoother bar animation (e.g. 30s = 300 ticks of 100ms)
+    if(timerPaused) return; //if timer is paused do not go for the next cycle
+    if(!resume) t = timePerQue * 10; // reset time for each question //calculating in terms of 100ms for smoother bar animation (e.g. 30s = 300 ticks of 100ms) // if resume is true do not reset time, continue from where it was paused
     bar.style.width = '100% ';
     bar.style.background = 'linear-gradient(90deg, var(--cyan), var(--green))';
+    console.log('timer started');
+    console.log(t);
     intervalId = setInterval(() => {
+        console.log(t);
         if (t > 0) t--;
         else {
             clearInterval(intervalId);
@@ -30,7 +37,18 @@ export function startTimer(onTimeUP) {
 }
 
 export function stopTimer() {
+    timerPaused = false;
     clearInterval(intervalId);
+}
+
+export function pauseTimer(){
+    if(timerPaused) return;
+    timerPaused =  true;
+    clearInterval(intervalId);
+}
+export function resumeTimer(onTimeUp){
+    timerPaused = false;
+    startTimer(onTimeUp,true);
 }
 
 export let totalTimeTaken = 0; //varible to calculate average time taken for each question inside quiz.js

@@ -152,12 +152,22 @@ export function generateTopicsHtml(isRecon = false) {
   const topics = loadTopics(isRecon);
   console.log(topics);
   const topicsContainer = document.querySelector('.js-topics');
-
+  if(topics.length === 0|| isRecon) {
+    const reconLbl = document.querySelector('.weak-chips-label');
+    const reconLogo = document.querySelector('.weak-chips-icon');
+    reconLogo.textContent = '◈';
+    reconLbl.textContent = "NO MISSION DATA — PLAY A QUIZ FIRST";
+    setTimeout(()=>{
+      reconLogo.textContent = '⚠';
+      reconLbl.textContent = "WEAK ZONES DETECTED — SELECT TO RECON";
+      toggleChips(false);
+    },4000);
+  }
   if (!topicsContainer || topics.length === 0) return;
 
   topicsContainer.innerHTML = '';
 
-  reconMode(isRecon, topics[0]); //Alter the button and the input box based on the recon condition
+  reconMode(isRecon); //Alter the button and the input box based on the recon condition
 
   topics.forEach(topic => {
     const div = document.createElement('div');

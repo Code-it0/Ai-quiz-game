@@ -745,6 +745,34 @@ body::after {
     letter-spacing: 1px;
 }
 
+.sidebar-exit {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #ff225522;
+}
+
+.exit-quiz-btn {
+  width: 100%;
+  background: #ff225508;
+  border: 1px solid #ff225544;
+  color: #ff225599;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  padding: 0.6rem;
+  cursor: crosshair;
+  transition: all 0.25s;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+
+.exit-quiz-btn:hover {
+  background: #ff225518;
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 15px #ff225528;
+  text-shadow: 0 0 8px var(--red);
+}
+
 /* main quiz area */
 .quiz-main {
     flex: 1;

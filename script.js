@@ -7,9 +7,10 @@ import { generateTopicsHtml } from './scripts/data/aiScan.js';
 
 // switches between pages (home/quiz/results) and highlights the correct nav tab
 console.log('connected');
-export function go(id, idx) {
+export function go(id) {
   // hide all pages
-  ['home', 'quiz', 'results'].forEach(p => {
+  const tabs = ['home', 'quiz', 'results'];
+  tabs.forEach(p => {
     const el = document.getElementById(p);
     el.classList.remove('active');
     el.style.display = 'none';
@@ -23,6 +24,7 @@ export function go(id, idx) {
   el.style.display = id === 'results' ? 'block' : 'flex';
   el.classList.add('active');
 
+  const idx = tabs.findIndex(t => t === id);
   // highlight the correct nav tab by index
   document.querySelectorAll('.nav-tab')[idx].classList.add('active');
 }
@@ -31,14 +33,14 @@ export function go(id, idx) {
 // toggles the topic chip dropdown open/closed
 export function toggleChips(visibility) {
   const c = document.getElementById('chips');
-  const reconLbl = document.querySelector('.js-weak-chips');
+  const reconDiv = document.querySelector('.js-weak-chips');
   if (visibility === true) {
     c.style.display = 'flex';
-    reconLbl.style.display = 'block';
+    reconDiv.style.display = 'block';
   } //compulsary show chips
   else {
     const aiBtn = document.querySelector('.ai-btn')
-    reconLbl.style.display = 'none';
+    reconDiv.style.display = 'none';
     if (c.style.display === 'none') {
       c.style.display = 'flex';
       // when chips open
@@ -82,7 +84,7 @@ window.addEventListener('keydown', e => {
     if (tabs[i - 1]) i--;
     else i = tabs.length - 1;
   }
-  go(tabs[i], i);
+  go(tabs[i]);
 });
 
 

@@ -1,4 +1,4 @@
-import { startTimer, stopTimer, addTimeleft, totalTimeTaken,timeTakenForQue, resetTimerStats } from './utils/timer.js';
+import { startTimer, stopTimer, addTimeleft, totalTimeTaken,timeTakenForQue, resetTimerStats ,pauseTimer , resumeTimer } from './utils/timer.js';
 import { defaultQuestions, fetchQuestions, autoAdaptDifficulty } from './data/questions.js';
 import { saveToStorage, SaveQuizINfo, questionLogPush, SaveQuestionLog } from './data/storage.js';
 import { calculateXP, resetStreakXP } from './utils/XP.js';
@@ -10,7 +10,7 @@ import { go } from '../script.js';
 
 
 export let quizFlag = false; //represents if quiz is ongoing 
-
+let quizPaused = false; //represents if quiz is paused when user clicks on nav tabs during quiz
 
 let questions = defaultQuestions; // Initialize with default questions, will be replaced by fetched questions when quiz starts
 //isQuestionResolved is used to prevent concurrent triger like optionclick and timer or 2 optionclicks at the same time which can cause multiple triggers and break the flow of the quiz
@@ -111,6 +111,7 @@ function onTimesUp() {
 
 export function nextQuestion() {
     console.log('Next question');
+    if(quizPaused) return; // if quiz is paused then return to stop the flow of quiz
     currentIndex++;
     isQuestionResolved = false; // mark question as unresolved for the next question
     questionLogPush(questionEntry); //push after each question is answered.. hence inside nextQuestion()
@@ -126,7 +127,7 @@ export function nextQuestion() {
         SaveQuizINfo(quizInfo); //only save when quiz is over
         saveToStorage(scoreData);
         generateResults(); //generate results before navigating to results page to ensure the data is ready for results page when it loads
-        go('results', 2);
+        go('results');
         fetchTopics(); //getting Ai topics for the next quiz , storing in local storage
         reconFetchTopics();
         setQuizIdleState();
@@ -191,10 +192,9 @@ document.querySelector('.js-launch-btn').addEventListener('click', async () => {
     questions = await fetchQuestions(quizInfo.quizTopic, quizInfo.difficulty, quizInfo.rounds) || defaultQuestions; // Fetch questions based on selected quiz settings before starting the quiz
 
     if (quizInfo.difficulty.toUpperCase() === "AUTO-ADAPT") quizInfo.difficulty = autoAdaptDifficulty;
-
     console.log('loaded');
     generateQuizHtml();
-    go('quiz', 1);
+    go('quiz');
     generateQuestion(questions[currentIndex]);
 });
 
@@ -282,7 +282,8 @@ export function setQuizActiveState() {
     let quizAccuracyBarElement = document.querySelector('.js-accuracy-bar');
     if (quizAccuracyBarElement) quizAccuracyBarElement.style.display = "block";
 
-
+    let abortBtn = document.querySelector('.sidebar-exit');
+    abortBtn.style.display = 'block';
     document.querySelector('.quiz-idle').style.display = 'none';
 }
 export function setQuizIdleState() {
@@ -342,7 +343,69 @@ export function setQuizIdleState() {
         grid.innerHTML = '';
         grid.dataset.generated = '0';
     }
+
+    const abortBtn = document.querySelector('.sidebar-exit');
+    if(abortBtn) abortBtn.style.display='none';
 }
+
+document.querySelectorAll('.exit-btn').forEach(tab=>{
+    tab.addEventListener('click',e =>{
+        const page = e.currentTarget.getAttribute('data-tab');
+        console.log(page);
+        if(quizFlag && page !== 'quiz'){
+            //this block represents quiz is ongoing
+            quizPaused = true; 
+            pauseTimer();
+            showExitOverlay(page);
+        }
+        else{
+           go(page);
+        }
+
+    })
+});
+
+
+function showExitOverlay(page){
+    const overlay = document.querySelector('.exit-overlay');
+    //updating the overlay data with actual quiz data before getting displayed
+    const statScore = document.getElementById('statScore');
+    statScore.textContent = `${scoreData.correct}/${scoreData.totalAnswered}`;
+    
+    const statXp = document.getElementById('statXP');
+    statXp.textContent = `+${xp}`;
+    const statStreak = document.getElementById('statStreak');
+    statStreak.textContent = `🔥 ${scoreData.maxStreak}`;
+
+    //all values updated , showing the overlay on scree
+    overlay.classList.remove('hidden');
+    let clicked = false; //to make sure user doesn't click both buttons
+    document.querySelector('.btn-stay').addEventListener('click',()=>{
+        if(clicked) return;
+        clicked = true;
+        //quiz resume
+        overlay.classList.add('hidden'); //hide overlay after button clicked
+        resumeTimer(onTimesUp);
+        quizPaused = false;
+        overlay.classList.add('hidden');
+    },{once:true});
+    document.querySelector('.btn-exit').addEventListener('click',()=>{
+        if(clicked) return;
+        clicked = true;
+        stopTimer();//stop the timer when userr decides to exit
+        //quiz exit
+        go(page);
+        setQuizIdleState();
+        currentIndex = 0; //reset current index for next quiz attempt
+        quizFlag = false; //reset for next quiz
+        quizPaused = false; //as  quiz is over reset it 
+        overlay.classList.add('hidden');
+    },{once:true});
+
+
+
+}
+
 setQuizIdleState();
 window.selOpt = selOpt;
 
